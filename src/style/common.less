@@ -1,0 +1,41 @@
+@headerHeight: 64px;
+@headerColor: rgba(242,71,61,0.90);
+
+.van-nav-bar{
+    background-color: @headerColor;
+    height: @headerHeight;
+    .van-icon{
+      color: white;
+      font-size: 25px;
+    }
+    .van-nav-bar__title{
+    font-family: PingFangSC-Medium;
+    font-size: 22px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    text-align: center;
+    }
+}
+
+.alarm {
+    position: relative;
+    & img{
+      width: 60px;
+      height: 60px;
+    }
+    .badge{
+      position: absolute;
+      color: white;
+      font-size: 17px;
+      background-color: red;
+      min-height: 24px;/*改后新增的代码*/
+      min-width:24px;/*改后新增的代码*/
+      line-height: 24px;
+      right:-2px;
+      top: -12px;
+      text-align: center;
+      -webkit-border-radius: 24px;
+      border-radius: 24px;
+      padding:2px;
+    }
+}  
