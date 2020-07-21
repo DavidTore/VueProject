@@ -11,7 +11,7 @@ const service = axios.create({
   //baseURL: 'http://172.24.249.135:9900',
   //baseURL: 'http://172.26.6.154:9900', //余小娟
   //baseURL: 'http://172.26.7.103:9900', //王旭
-  // baseURL: "https://cfms-web-test.evergrande.com/cfms",
+  baseURL: "https://cfms-web-test.evergrande.com/cfms",
   //  baseURL: env.apiHost,
   timeout: 30000 // 请求超时时间
 });

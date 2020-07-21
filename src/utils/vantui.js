@@ -10,6 +10,9 @@ import {
     Row,
     Icon,
     NumberKeyboard,
+    Cell,
+    CellGroup,
+    Field,
 } from 'vant';
 
 const arr = [
@@ -22,6 +25,9 @@ const arr = [
     Row,
     Icon,
     NumberKeyboard,
+    Cell,
+    CellGroup,
+    Field,
 ];
 
 for (let i = 0; i < arr.length; i++) {
