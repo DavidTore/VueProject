@@ -2,33 +2,15 @@
   <div class="main">
     <div class="title">
       <van-nav-bar
-          title="手动输入"
           left-arrow
           @click-left="onClickLeft"
           @click-right="onClickRight"
       >
-      <template #right><van-icon name="scan" /></template>
+      <template #title>{{receiptNumber}}</template>
       </van-nav-bar>
   </div>
   <div class="content">
       <div class="card"> 
-          <div>
-          <van-field class="receipt-number" :value="receiptNumber" type="digit" 
-            placeholder="请输入正确的单号" @touchstart.native.stop="showKeyboard = true" 
-            :style="{border:(errorFlag?'1px solid red':'1px solid #E4E6EB')}"/>
-            </div>
-            <div class="info" v-show="errorFlag"> <span>您所输入的单号不正确</span> </div>
-          <van-number-keyboard
-                v-model="receiptNumber"
-                title="输入单号"
-                close-button-text="确定"
-                :show="showKeyboard"
-                :maxlength="16"
-                @blur="showKeyboard = false"
-                @close="onClose"
-                @input="errorFlag = false"
-                @delete="errorFlag = false"
-                />   
       </div>
   </div>
   </div>
@@ -37,7 +19,7 @@
 <script>
 import API from '@/service/shipped/index.js';
 export default {
-  name: 'getReceipts',
+  name: 'fillInReceipts',
   data() {
     return {
       showKeyboard: true,
@@ -47,8 +29,13 @@ export default {
   },
   methods: {
     onClickLeft(){
-      console.log('onClickLeft');
+      this.$dialog.confirm({
+          title: '提示',
+          message:'资料未提交，返回后填写的资料会清空，确定返回？'
+      }).then(() => {
       this.$router.go(-1);
+      })
+        .catch(()=>{});
     },
     onClickRight(){
         console.log('onClickRight');
@@ -59,26 +46,10 @@ export default {
         if(!this.receiptNumber){
             this.errorFlag = true;
             console.log('请传值')
-        } else {
-          API.submitReceipt({
-    "info":{
-        "token":"SPS9sJhqEW+YHDx+RN3Eg5FR6GIlX2tLfJGWAaAklN3CHovGTUb92NgIQfD7aHKPRNlXxBuN1Q6nNZOjmQYJ+eosG7ABPXyZFx42DAjTlW8=",
-        "sysVersion":"STF-AL00@@Android9",
-        "appVersion":"竖屏2.2.7",
-        "imei":"864035030975545",
-        "uid":"112239710"
-    },
-    "param":{
-        "id":"1278219213051924480"
-    }
-}).then().catch();
         }
     }
   },
   created(){
-      API.addRole({s:'s'}).then(res => {
-        this.$router.push({name: 'fill-in-receipts'})
-      }).catch(err => {});
   }
   
 }
@@ -90,7 +61,7 @@ export default {
     top: 64px;
     bottom: 0px;
     left: 0px;
-    background: #354255;
+    background: rgb(245, 245, 250);
     .card {
         margin: 40pt 30pt;
         // width:210pt;

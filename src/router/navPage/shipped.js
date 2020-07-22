@@ -10,5 +10,11 @@ export default {
         permission: '',
         component: () => import('@/views/shipped-goods/get-receipts.vue')
       },
+      {
+        path: '/shipped/fill-in-receipts',
+        label: '填写收货数据',
+        name: 'fill-in-receipts',
+        component: () => import('@/views/shipped-goods/fill-in-receipts.vue')
+      }
     ],
   }

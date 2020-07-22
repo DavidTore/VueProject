@@ -3,7 +3,6 @@ import 'vant/lib/index.css';
 import { 
     Button,
     Toast, 
-    Dialog,
     Image as VanImage,
     NavBar,
     Col,
@@ -13,12 +12,12 @@ import {
     Cell,
     CellGroup,
     Field,
+    Dialog,
 } from 'vant';
 
 const arr = [
     Button,
     Toast,
-    Dialog,
     VanImage,
     NavBar,
     Col,
@@ -28,6 +27,7 @@ const arr = [
     Cell,
     CellGroup,
     Field,
+    Dialog,
 ];
 
 for (let i = 0; i < arr.length; i++) {
