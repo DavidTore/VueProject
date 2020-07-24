@@ -13,6 +13,8 @@ import {
     CellGroup,
     Field,
     Dialog,
+    Divider,
+    Uploader,
 } from 'vant';
 
 const arr = [
@@ -28,6 +30,8 @@ const arr = [
     CellGroup,
     Field,
     Dialog,
+    Divider,
+    Uploader,
 ];
 
 for (let i = 0; i < arr.length; i++) {

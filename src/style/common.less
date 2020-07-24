@@ -17,6 +17,76 @@
     }
 }
 
+.van-dialog{
+  .van-dialog__header {
+    font-family: PingFangSC-Medium;
+    font-size: 25px;
+    color: #333333;
+    text-align: center;
+  }
+  .van-dialog__content{
+    .van-dialog__message--has-title{
+      font-family: PingFangSC-Regular;
+      font-size: 16px;
+      color: #333333;
+      text-align: center;
+    }
+  }
+  .van-dialog__cancel{
+    .van-button__content{
+      .van-button__text{
+        font-family: PingFangSC-Regular;
+        color: #888888;
+        text-align: center;
+      }
+    }
+  }
+  .van-dialog__confirm{
+    .van-button__text{
+      font-family: PingFangSC-Semibold;
+      color: #F2584F;
+      text-align: center;
+    }
+  }
+}
+
+.van-cell {
+  .van-cell__title{
+    span{
+      color:#333333;
+    }
+  }
+  .van-cell__value{
+    flex: 1.5;
+    span{
+      color: #666666;
+    }
+    .van-button--normal{
+      padding: 0 8px;
+    }
+    .van-button{
+      height: 30px;
+      background: #F2584F;
+      border-radius: 4px;
+      .van-button__text{
+        font-family: PingFangSC-Medium;
+        color: #FFFFFF;
+        font-size: 11px;
+      }
+    }
+    .van-uploader{
+      .van-uploader__preview-image{
+        width: 60px;
+        height: 60px;
+      }
+      .van-uploader__upload{
+        width: 60px;
+        height: 60px;
+      }
+    }
+  }
+}
+
 .alarm {
     position: relative;
     & img{

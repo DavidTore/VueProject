@@ -10,8 +10,23 @@
       </van-nav-bar>
   </div>
   <div class="content">
-      <div class="card"> 
-      </div>
+    <van-cell-group>
+        <van-cell title="采购订单号：" :value='orderNumber' />
+        <van-cell title="供应商：" :value="supplierName" />
+        <van-divider></van-divider>
+        <van-cell title="到场时间：">
+            <van-button type="default">到货确认</van-button>
+        </van-cell>
+        <van-cell title="实收数量：">
+            <van-button type="default">默认为应收数量</van-button>
+        </van-cell>
+        <van-cell title="施工签章员："></van-cell>
+        <van-cell>
+            <template #title><span style="color:red;font-size: 16px">*</span><span>收货照片：</span></template>
+            <van-uploader v-model="photoList" multiple />
+        </van-cell>
+        
+    </van-cell-group>
   </div>
   </div>
 </template>
@@ -25,6 +40,11 @@ export default {
       showKeyboard: true,
       receiptNumber: '',
       errorFlag: false,
+      orderNumber: '',
+      supplierName: '',
+      receiveTime: '',
+      actualAmount: 0,
+      photoList: []
     }
   },
   methods: {
@@ -50,6 +70,9 @@ export default {
     }
   },
   created(){
+      this.receiptNumber = "Hello World";
+      this.orderNumber = "100568";
+      this.supplierName = "供应商A";
   }
   
 }
@@ -70,6 +93,16 @@ export default {
         border-radius: 10px;
         border-radius: 10px;
     }
+    .van-cell-group{
+            .van-cell{
+                &::after{
+                    border-bottom: 0
+                }
+                .van-cell__value{
+                    text-align: left;
+                }
+            }
+        }
 }
 .receipt-number{
     top:40pt;
