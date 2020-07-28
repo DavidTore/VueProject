@@ -15,6 +15,9 @@ import {
     Dialog,
     Divider,
     Uploader,
+    Form,
+    Picker,
+    Popup,
 } from 'vant';
 
 const arr = [
@@ -32,6 +35,9 @@ const arr = [
     Dialog,
     Divider,
     Uploader,
+    Form,
+    Picker,
+    Popup,
 ];
 
 for (let i = 0; i < arr.length; i++) {
