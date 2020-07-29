@@ -10,6 +10,9 @@
       </van-nav-bar>
   </div>
   <div class="content">
+      <div>
+          
+      </div>
     <van-cell-group>
 
         <van-cell title="采购订单号：" :value='orderNumber' >
@@ -45,7 +48,9 @@
         </van-cell>
         </div>
         <van-cell title="施工签章员：">
-            <template #extra><div class="extra"></div></template>
+            <van-field v-model="signer" placeholder="请选择签章员" readonly right-icon="arrow"
+                            @click="signerFlag = true">
+            </van-field>
         </van-cell>
         <div id="flex-special">
         <van-cell>
@@ -59,7 +64,7 @@
         <div v-for="(item,index) in materialList" v-bind:key="item.id">
             <cell-group-list :item="item" :index="index" v-if="sonRefresh"></cell-group-list>
         </div>
-        <div style="margin-top:10px;background: #FFFFFF;height:52pt">
+        <div style="margin-top:10px;background: #FFFFFF;height:52pt;width:100%;">
             <div style="text-align:center">
             <van-button style="background: #F2584F; border-radius: 8px; color:white; width:75%; margin-top:9pt">提交及签章</van-button>
             </div>
@@ -81,7 +86,10 @@ export default {
       showMoreFlag: false, //展示更多信息
       receiptNumber: '',
       errorFlag: false,
+      signerFlag:false, //选择签章员
       orderNumber: '',
+      signer: '', //外部签章员
+      signerName:'', //签章员选择
       goodsStatus: '待收货',
       supplierCompany: '',
       supplierName:'',
@@ -145,6 +153,13 @@ export default {
 }
 </script>
 <style lang="less"  scoped>
+/deep/ .title{
+    .van-nav-bar{
+        top:0;
+        position:fixed;
+        width: 100%;
+    }
+}
 /deep/ .content{
     width: 100%;
     position: absolute;

@@ -18,6 +18,7 @@ import {
     Form,
     Picker,
     Popup,
+    Search,
 } from 'vant';
 
 const arr = [
@@ -38,6 +39,7 @@ const arr = [
     Form,
     Picker,
     Popup,
+    Search,
 ];
 
 for (let i = 0; i < arr.length; i++) {
