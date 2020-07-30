@@ -1,5 +1,8 @@
 <template>
   <div class="main">
+      <div>
+          <signer-list :show="signerFlag" @onClickCancel="signerFlag = false" @onClickCell="onClickSignerName"> </signer-list>
+      </div>
     <div class="title">
       <van-nav-bar
           left-arrow
@@ -10,9 +13,6 @@
       </van-nav-bar>
   </div>
   <div class="content">
-      <div>
-          
-      </div>
     <van-cell-group>
 
         <van-cell title="采购订单号：" :value='orderNumber' >
@@ -48,7 +48,7 @@
         </van-cell>
         </div>
         <van-cell title="施工签章员：">
-            <van-field v-model="signer" placeholder="请选择签章员" readonly right-icon="arrow"
+            <van-field v-model="signer.name" placeholder="请选择签章员" readonly right-icon="arrow"
                             @click="signerFlag = true">
             </van-field>
         </van-cell>
@@ -77,8 +77,9 @@
 <script>
 import API from '@/service/shipped/index.js';
 import CellGroupList from "./cell-group-list.vue";
+import SignerList from "./signer-list.vue";
 export default {
-  components:{CellGroupList},
+  components:{CellGroupList,SignerList},
   name: 'fillInReceipts',
   data() {
     return {
@@ -88,7 +89,7 @@ export default {
       errorFlag: false,
       signerFlag:false, //选择签章员
       orderNumber: '',
-      signer: '', //外部签章员
+      signer: {}, //外部签章员
       signerName:'', //签章员选择
       goodsStatus: '待收货',
       supplierCompany: '',
@@ -139,6 +140,12 @@ export default {
             this.sonRefresh= true;
         });
         this.$toast.success('修改成功');
+    },
+    //获取内部cell
+    onClickSignerName(val){
+        console.log(val);
+        this.signerFlag = false;
+        this.signer = val;
     }
   },
   created(){
