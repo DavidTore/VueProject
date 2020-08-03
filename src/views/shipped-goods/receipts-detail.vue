@@ -1,8 +1,5 @@
 <template>
   <div class="main">
-      <div>
-          <signer-list :show="signerFlag" @onClickCancel="signerFlag = false" @onClickCell="onClickSignerName"> </signer-list>
-      </div>
     <div class="title">
       <van-nav-bar
           left-arrow
@@ -13,7 +10,6 @@
   </div>
   <div class="content">
     <van-cell-group>
-
         <van-cell title="采购订单号：" :value='orderNumber' >
             <template #extra>
                 <div class="extra">
@@ -21,15 +17,8 @@
                 </div>
             </template>
         </van-cell>
-        <van-cell title="供应商：" :value="supplierCompany" >
-            <template #extra>
-                <div class="extra">
-                    <van-icon name="arrow-down" color="#F2584F" @click="showMoreFlag = true" v-show="!showMoreFlag"/>
-                    <van-icon name="arrow-up" color="#F2584F" @click="showMoreFlag = false" v-show="showMoreFlag"/>
-                </div>
-            </template>
-        </van-cell>
-        <div id="flex-special" v-show="showMoreFlag">
+        <van-cell title="供应商：" :value="supplierCompany" ></van-cell>
+        <div id="flex-special">
             <van-cell title="供应商联系人：" :value="supplierName" />
             <van-cell title="使用单位：" :value="userCompany" />
             <van-cell title="使用收货人：" :value="userName" />
@@ -39,19 +28,11 @@
         <van-divider></van-divider>
         <div id="flex-special">
         <van-cell title="到场时间：">
-            <van-button type="default" @click="onReceiveTime" v-if="!receiveTimeFlag">到货确认</van-button>
-            <span v-else>{{receiveTime}}</span>
-        </van-cell>
-        <van-cell title="实收数量：">
-            <van-button type="default" @click="onSetOriginalAmount">默认为应收数量</van-button>
+            <span>{{receiveTime}}</span>
         </van-cell>
         </div>
-        <van-cell title="施工签章员：">
-            <van-field v-model="signer.name" placeholder="请选择签章员" readonly right-icon="arrow"
-                            @click="signerFlag = true">
-            </van-field>
-        </van-cell>
         <div id="flex-special">
+        <van-cell title="施工签章员：" :value="signer.name"/>
         <van-cell>
             <template #title><span style="color:red;font-size: 16px;">*</span><span>收货照片：</span></template>
             <van-uploader v-model="photoList" multiple/>
@@ -61,7 +42,7 @@
     </van-cell-group>
     <van-form @submit="onReceiptsSubmit">
         <div v-for="(item,index) in materialList" v-bind:key="item.id">
-            <cell-group-list :item="item" :index="index" v-if="sonRefresh" :ref="'cellListItem'"></cell-group-list>
+            <cell-list-detail :item="item" :index="index" v-if="sonRefresh" :ref="'cellListItem'"></cell-list-detail>
         </div>
         <div style="margin-top:10px;background: #FFFFFF;height:52pt;width:100%;">
             <div style="text-align:center">
@@ -75,22 +56,20 @@
 
 <script>
 import API from '@/service/shipped/index.js';
-import CellGroupList from "./cell-group-list.vue";
-import SignerList from "./signer-list.vue";
+import CellListDetail from "./cell-list-detail.vue";
 export default {
-  components:{CellGroupList,SignerList},
-  name: 'fillInReceipts',
+  components:{CellListDetail},
+  name: 'receiptsDetail',
   data() {
     return {
       showKeyboard: true,
       showMoreFlag: false, //展示更多信息
       receiptNumber: '',
       errorFlag: false,
-      signerFlag:false, //选择签章员
       orderNumber: '',
       signer: {}, //外部收货签章员
       signerName:'', //签章员选择
-      goodsStatus: '待收货',
+      goodsStatus: '已收货',
       supplierCompany: '',
       supplierName:'',
       userCompany:'',
@@ -106,13 +85,8 @@ export default {
   },
   methods: {
     onClickLeft(){
-      this.$dialog.confirm({
-          title: '提示',
-          message:'资料未提交，返回后填写的资料会清空，确定返回？'
-      }).then(() => {
-      this.$router.go(-1);
-      })
-        .catch(()=>{});
+      
+      this.$router.push({name:'get-receipts'});
     },
     onClose(){
         console.log("closeKeyboard")
@@ -174,7 +148,6 @@ export default {
             }
         }
         console.log(formList);
-        this.$router.push({name: 'receipts-detail'})
     },
   },
   created(){

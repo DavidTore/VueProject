@@ -15,6 +15,12 @@ export default {
         label: '填写收货数据',
         name: 'fill-in-receipts',
         component: () => import('@/views/shipped-goods/fill-in-receipts.vue')
+      },
+      {
+        path: '/shipped/receipts-detail',
+        label:'收货数据详情',
+        name: 'receipts-detail',
+        component: () => import('@/views/shipped-goods/receipts-detail.vue')
       }
     ],
   }
