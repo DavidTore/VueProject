@@ -9,25 +9,10 @@
             <van-cell title="应收数量：" :value="item.shouldNumber">
             <template #extra><div class="extra">个</div></template>
             </van-cell>
-            <van-cell :rules="[{ required: true, message: '请填写实收数量' }]">
-            <template #title><span style="color:red;font-size: 16px">*</span><span>实收数量：</span></template>
-            <van-field v-model="listAmount" type="digit" placeholder="填写数量" @blur="checkNum"></van-field>
+            <van-cell title="实收数量：" :value="item.actualAmount">
             <template #extra><div class="extra">个</div></template>
             </van-cell>
-
-            <van-field v-if="compareFlag" v-model="amountReason" label="少收原因：" placeholder="请选择原因" readonly right-icon="arrow" required
-                            @click="onClickReason">
-            </van-field>
-            <van-popup v-model="showReason" position="bottom" :style="{ height: '50%' }" round>
-                <van-picker
-                        title="少收原因"
-                        show-toolbar
-                        :columns="reasonColumns"
-                        @confirm="onConfirm"
-                        @cancel="onCancel"
-                        @change="onChange"
-                />
-            </van-popup>
+            <div id="flex-special" v-if="compareFlag"><van-cell title="少收原因：" :value="item.reason"/> </div>
         </van-cell-group>
     </div>
 </template>
@@ -40,7 +25,6 @@ export default {
             listAmount: '',
             amountReason: '',
             showReason: false,
-            reasonColumns: ['杭州', '宁波', '温州', '嘉兴', '湖州'],
         }
     },
     props:{
@@ -51,11 +35,6 @@ export default {
         index: Number,
     },
     methods:{
-        checkNum(){
-            if(this.listAmount > this.item.shouldNumber){
-                this.listAmount = this.item.shouldNumber
-            }
-        },
         onClickReason(){
             this.showReason = true;
         },
@@ -77,25 +56,14 @@ export default {
                 return false;
             } else return true;
         },
-        //返回表单
-        getCellList(){
-            if(this.compareFlag){
-                return {
-                    listAmount: this.listAmount,
-                    amountReason: this.amountReason,
-                }
-            } else return {
-                listAmount: this.listAmount
-            }
-        }
+        
     },
     computed:{
         compareFlag(){
-            return this.listAmount < this.item.shouldNumber
+            return this.item.actualAmount != this.item.shouldNumber
         }
     },
     created() {
-        this.listAmount = this.item.actualAmount;
     },
     watch: {
         item:{

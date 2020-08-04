@@ -190,17 +190,21 @@ export default {
 </script>
 <style lang="less"  scoped>
 /deep/ .title{
+    height:70px;
+    width:100%;
+    position:fixed;
     .van-nav-bar{
         top:0;
-        position:fixed;
         width: 100%;
     }
 }
 /deep/ .content{
     width: 100%;
-    position: absolute;
-    top: 64px;
-    left: 0px;
+    position: fixed;
+    bottom:0;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    top: 70px;
     background: rgb(245, 245, 250);
     .card {
         margin: 40pt 30pt;

@@ -46,7 +46,7 @@
         </div>
         <div style="margin-top:10px;background: #FFFFFF;height:52pt;width:100%;">
             <div style="text-align:center">
-            <van-button style="background: #F2584F; border-radius: 8px; color:white; width:75%; margin-top:9pt">提交及签章</van-button>
+            <van-button style="background: #F2584F; border-radius: 8px; color:white; width:75%; margin-top:9pt">作废并重新发起</van-button>
             </div>
         </div>
     </van-form>
@@ -119,7 +119,7 @@ export default {
     //表单提交
     onReceiptsSubmit(val){
         // this.validateContent();
-        this.validateCellForm()
+        // this.validateCellForm()
     },
     //验证前置内容
     validateContent(){
@@ -154,27 +154,29 @@ export default {
       this.receiptNumber = "Hello World";
       this.orderNumber = "100568";
       this.supplierName = "供应商A";
-      this.materialList = [{'id':1, 'materialNumber':1000536,'mateiralName':"6#水晶灯/19头/H370&1s100mm",'shouldNumber':300},
-      {'id':2, 'materialNumber':1000537,'mateiralName':"6#水晶灯/19头/H370&f1100mm",'shouldNumber':320}];
-      this.materialList.forEach(i => {i.actualAmount = '';})
+      this.materialList = [{'id':1, 'materialNumber':1000536,'mateiralName':"6#水晶灯/19头/H370&1s100mm",'shouldNumber':300,'actualAmount':299, 'reason':'货损'},
+      {'id':2, 'materialNumber':1000537,'mateiralName':"6#水晶灯/19头/H370&f1100mm",'shouldNumber':320, 'actualAmount': 320}];
   }
   
 }
 </script>
 <style lang="less"  scoped>
 /deep/ .title{
+    height:70px;
+    width:100%;
+    position:fixed;
     .van-nav-bar{
         top:0;
-        position:fixed;
         width: 100%;
     }
 }
 /deep/ .content{
     width: 100%;
-    position: absolute;
-    top: 64px;
-    left: 0px;
-    background: rgb(245, 245, 250);
+    position: fixed;
+    bottom:0;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    top: 70px;
     .card {
         margin: 40pt 30pt;
         // width:210pt;

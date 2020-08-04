@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       badgeFlag: false,
-      badgeNum: 10,
+      badgeNum: 0,
       badgeShowNum:0
     }
   },
@@ -55,6 +55,7 @@ export default {
         this.badgeShowNum = "99+"
       } else this.badgeShowNum = this.badgeNum;
       this.badgeFlag = !this.badgeFlag;
+      this.$router.push({name: 'recheck-list'})
     }
   },
   
