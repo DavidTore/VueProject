@@ -14,7 +14,7 @@
         <div class="content">
             
             <div>
-                <list-detail ></list-detail>
+                <list-detail v-for="(item,index) in recheckList" :item="item" :index="index" v-bind:key="item.id"></list-detail>
             </div>
         </div>
 
@@ -28,7 +28,8 @@ export default {
     data() {
         return {
             listNum:2,
-            searchInput:''
+            searchInput:'',
+            recheckList: [], //列表
         }
     },
     methods: {
@@ -40,7 +41,8 @@ export default {
         }
     },
     created(){
-
+        this.recheckList = [{'id':1, 'materialNumber':1000536,'mateiralType':"6#水晶灯/19头/H370&1s100mm",'brandName':'Evergrande','constructor':'hello','useLocation':'GZ,SZ',"cancelOrder":'guess',"qualityRes":'res','newOrder':12},
+      {'id':2, 'materialNumber':1000537,'mateiralType':"6#水晶灯/19头/H370&f1100mm",'shouldNumber':320}];
     }
 }
 </script>
@@ -64,5 +66,26 @@ export default {
     overflow-x:hidden;
     top: 120px;
     background: rgb(245, 245, 250);
+    .card {
+        margin: 40pt 30pt;
+        // width:210pt;
+        height:321pt;
+        background: #FFFFFF;
+        border-radius: 10px;
+        border-radius: 10px;
+    }
+    .van-cell-group{
+            .van-cell{
+                &::after{
+                    border-bottom: 0
+                }
+                .van-cell__value{
+                    text-align: left;
+                    .van-field{
+                        padding: 0;
+                    }
+                }
+            }
+        }
 }
 </style>
