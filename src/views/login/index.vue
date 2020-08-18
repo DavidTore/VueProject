@@ -15,13 +15,13 @@
   <van-col span="8" @click="reCheckClick">
     <div class="alarm">
     <van-image width="100" height="100"  :src="require('@/assets/images/recheck.png')">
-          <div class="badge" v-if="badgeFlag">{{badgeShowNum}}</div>
+          <div class="badge" v-if="badgeNum != 0">{{badgeNum}}</div>
     </van-image>
     </div>
     <span>二次签章</span>
   </van-col>
   <van-col span="8"> 
-    <van-image width="100" height="100"  :src="require('@/assets/images/standing.png')"/> <br/>
+    <van-image width="100" height="100"  :src="require('@/assets/images/standing.png')" @click="receiptsListClick"/> <br/>
     <span>收货单台账</span>
   </van-col>
 </van-row>
@@ -32,18 +32,20 @@
 </template>
 
 <script>
+import API from '@/service/secondSign/index.js';
+
 export default {
   name: 'index',
   data() {
     return {
-      badgeFlag: false,
+      // badgeFlag: false,
       badgeNum: 0,
-      badgeShowNum:0
     }
   },
   methods: {
     onClickLeft(){
       console.log('onClickLeft');
+      window.webViewWindow.closeWebViewWindow();
     },
     shippedClick(){
       this.$router.push({
@@ -51,13 +53,21 @@ export default {
       })
     },
     reCheckClick(){
-      if(this.badgeNum > 99) {
-        this.badgeShowNum = "99+"
-      } else this.badgeShowNum = this.badgeNum;
-      this.badgeFlag = !this.badgeFlag;
       this.$router.push({name: 'recheck-list'})
+    },
+    receiptsListClick(){
+      this.$router.push({
+        name:'receipts-list'
+      })
     }
   },
+  created(){
+    API.recheckCount({}).then(res => {
+      if(res.data > 99) {
+        this.badgeNum = "99+"
+      } else this.badgeNum = res.data
+    }).catch(e => {});
+  }
   
 }
 </script>

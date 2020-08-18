@@ -5,48 +5,47 @@
           left-arrow
           @click-left="onClickLeft"
       >
-      <template #title>{{receiptNumber}}</template>
+      <template #title>{{deliveryOrder }}</template>
       </van-nav-bar>
   </div>
   <div class="content">
     <van-cell-group>
-        <van-cell title="采购订单号：" :value='orderNumber' >
+        <van-cell title="采购订单号：" :value='poCode' >
             <template #extra>
                 <div class="extra">
-                    <span style="font-family: PingFangSC-Medium;font-size:17px;color: #F2584F;">{{goodsStatus}}</span>
+                    <span style="font-family: PingFangSC-Medium;font-size:17px;color: #F2584F;">{{status}}</span>
                 </div>
             </template>
         </van-cell>
-        <van-cell title="供应商：" :value="supplierCompany" ></van-cell>
         <div id="flex-special">
-            <van-cell title="供应商联系人：" :value="supplierName" />
-            <van-cell title="使用单位：" :value="userCompany" />
-            <van-cell title="使用收货人：" :value="userName" />
+            <van-cell title="供应商：" :value="supplierName " ></van-cell>
+            <van-cell title="供应商联系人：" :value="supplierContact " />
+            <van-cell title="使用单位：" :value="usingDepartment " />
+            <van-cell title="使用收货人：" :value="usingReceiver " />
             <van-cell title="项目名称：" :value="projectName" />
-            <van-cell title="使用位置：" :value="userLocation" />
+            <van-cell title="使用位置：" :value="usingPlace" />
         </div>
         <van-divider></van-divider>
         <div id="flex-special">
         <van-cell title="到场时间：">
-            <span>{{receiveTime}}</span>
+            <span>{{inTime}}</span>
         </van-cell>
         </div>
         <div id="flex-special">
-        <van-cell title="施工签章员：" :value="signer.name"/>
-        <van-cell>
-            <template #title><span style="color:red;font-size: 16px;">*</span><span>收货照片：</span></template>
-            <van-uploader v-model="photoList" multiple/>
-        </van-cell>
+        <van-cell title="施工签章员：" :value="jobSiteReceiver"/>
+        <van-cell title="附件：">
+                        <a :href="pdfId">点击查看</a>
+                    </van-cell> 
         </div>
         
     </van-cell-group>
-    <van-form @submit="onReceiptsSubmit">
-        <div v-for="(item,index) in materialList" v-bind:key="item.id">
-            <cell-list-detail :item="item" :index="index" v-if="sonRefresh" :ref="'cellListItem'"></cell-list-detail>
+    <van-form >
+        <div v-for="(item,index) in materialList" v-bind:key="item.materialCode">
+            <cell-list-detail :item="item" :index="index"></cell-list-detail>
         </div>
-        <div style="margin-top:10px;background: #FFFFFF;height:52pt;width:100%;">
+        <div style="margin-top:10px;background: #FFFFFF;height:52pt;width:100%;" v-if="showDiscardButton">
             <div style="text-align:center">
-            <van-button style="background: #F2584F; border-radius: 8px; color:white; width:75%; margin-top:9pt">作废并重新发起</van-button>
+            <van-button @click="discardReceipt" style="background: #F2584F; border-radius: 8px; color:white; width:75%; margin-top:9pt">作废并重新发起</van-button>
             </div>
         </div>
     </van-form>
@@ -64,23 +63,25 @@ export default {
     return {
       showKeyboard: true,
       showMoreFlag: false, //展示更多信息
-      receiptNumber: '',
+      deliveryOrder : '',
       errorFlag: false,
-      orderNumber: '',
-      signer: {}, //外部收货签章员
+      poCode: '',
+      jobSiteReceiver : '', //外部收货签章员
       signerName:'', //签章员选择
-      goodsStatus: '已收货',
-      supplierCompany: '',
-      supplierName:'',
-      userCompany:'',
-      userName: '',
+      goodsStatus: ['待收货','已收货'],
+      status: '', //收货状态
+      supplierName : '',
+      supplierContact :'',
+      usingDepartment :'',
+      usingReceiver : '',
       projectName:'',
-      userLocation:'',
-      receiveTime: '',  //收货到场时间
+      usingPlace:'',
+      pdfId:'',
+      inTime : '',  //收货到场时间
       receiveTimeFlag: false,
       photoList: [],    //收货照片
       materialList: [],
-      sonRefresh: true,
+      showDiscardButton: false, //是否显示作废按钮
     }
   },
   methods: {
@@ -88,74 +89,28 @@ export default {
       
       this.$router.push({name:'get-receipts'});
     },
-    onClose(){
-        console.log("closeKeyboard")
-        if(!this.receiptNumber){
-            this.errorFlag = true;
-            console.log('请传值')
-        }
-    },
-    //到场时间
-    onReceiveTime(){
-        this.receiveTime = new Date();
-        this.receiveTimeFlag = true;
-    },
-    //默认为应收数量
-    onSetOriginalAmount(){
-        this.materialList = this.materialList.map(item => { item.actualAmount = item.shouldNumber; return item;});
-        console.log(this.materialList)
-        this.sonRefresh= false;
-        this.$nextTick(() => {
-            this.sonRefresh= true;
-        });
-        this.$toast.success('修改成功');
-    },
-    //获取内部cell
-    onClickSignerName(val){
-        console.log(val);
-        this.signerFlag = false;
-        this.signer = val;
-    },
-    //表单提交
-    onReceiptsSubmit(val){
-        // this.validateContent();
-        // this.validateCellForm()
-    },
-    //验证前置内容
-    validateContent(){
-        if(!this.receiveTime){
-            this.$toast.fail('请填写到场时间')
-        } else if(!this.signer.name){
-            this.$toast.fail('请选择施工签章员')
-        } else if(this.photoList.length == 0){
-            this.$toast.fail('请上传收货照片')
-        }
-    },
-    //验证表单内容
-    validateCellForm(){
-        let formFlag = true;
-        let formList = [];
-        for(let i=0;i<this.materialList.length;i++){
-            if(!this.$refs.cellListItem[i].validateCell()){
-                this.$toast.fail('请填写实收数量或少收 ');
-                formFlag = false;
-                break;
-            }
-        }
-        if(formFlag){
-            for(let i=0;i<this.materialList.length;i++){
-            formList.push(this.$refs.cellListItem[i].getCellList());
-            }
-        }
-        console.log(formList);
-    },
+    //二次签章按钮
+    discardReceipt(){
+    this.$dialog.confirm({
+          title: '提示',
+          message:'确定作废，并重新发起？'
+      }).then(() => {
+      API.dropCommit({param:{deliveryOrder:this.deliveryOrder}}).then(res =>  {
+          this.$router.push({name: 'fill-in-receipts', params:{deliveryOrder:this.deliveryOrder}});
+      }).catch(e=>{})
+      })
+        .catch((e)=>{});
+    }
+    
   },
   created(){
-      this.receiptNumber = "Hello World";
-      this.orderNumber = "100568";
-      this.supplierName = "供应商A";
-      this.materialList = [{'id':1, 'materialNumber':1000536,'mateiralName':"6#水晶灯/19头/H370&1s100mm",'shouldNumber':300,'actualAmount':299, 'reason':'货损'},
-      {'id':2, 'materialNumber':1000537,'mateiralName':"6#水晶灯/19头/H370&f1100mm",'shouldNumber':320, 'actualAmount': 320}];
+      this.deliveryOrder  = this.$route.params.deliveryOrder;
+      API.submitReceipt({param:{deliveryOrder:this.deliveryOrder }}).then( res => {
+          console.log(res);
+          Object.assign(this.$data,res.data)
+          this.status = this.goodsStatus[res.data.status];
+          this.materialList = res.data.doMaterialVos;
+      }).catch(e=>{});
   }
   
 }

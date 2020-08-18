@@ -13,7 +13,7 @@
   <div class="content">
       <div class="card"> 
           <div>
-          <van-field class="receipt-number" :value="receiptNumber" type="digit" 
+          <van-field class="receipt-number" readonly :value="receiptNumber" type="digit" 
             placeholder="请输入正确的单号" @touchstart.native.stop="showKeyboard = true" 
             :style="{border:(errorFlag?'1px solid red':'1px solid #E4E6EB')}"/>
             </div>
@@ -52,7 +52,6 @@ export default {
     },
     onClickRight(){
         console.log('onClickRight');
-        this.$router.push({name: 'fill-in-receipts'})
     },
     onClose(){
         console.log("closeKeyboard")
@@ -60,25 +59,22 @@ export default {
             this.errorFlag = true;
             console.log('请传值')
         } else {
-          API.submitReceipt({
-    "info":{
-        "token":"SPS9sJhqEW+YHDx+RN3Eg5FR6GIlX2tLfJGWAaAklN3CHovGTUb92NgIQfD7aHKPRNlXxBuN1Q6nNZOjmQYJ+eosG7ABPXyZFx42DAjTlW8=",
-        "sysVersion":"STF-AL00@@Android9",
-        "appVersion":"竖屏2.2.7",
-        "imei":"864035030975545",
-        "uid":"112239710"
-    },
-    "param":{
-        "id":"1278219213051924480"
-    }
-}).then().catch();
+          API.submitReceipt({param:{
+            deliveryOrder: this.receiptNumber
+          }}).then(res => {
+            if(res.data.status == 0) {
+            this.$router.push({name: 'fill-in-receipts', params:{deliveryOrder:this.receiptNumber}});
+            }
+             else if(res.data.status == 1) {
+            this.$router.push({name: 'receipts-detail', params:{deliveryOrder:this.receiptNumber}});
+            }
+          }).catch(err => {
+            this.errorFlag = true;
+          });
         }
     }
   },
   created(){
-      API.addRole({s:'s'}).then(res => {
-        this.$router.push({name: 'fill-in-receipts'})
-      }).catch(err => {});
   }
   
 }

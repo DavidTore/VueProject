@@ -11,9 +11,10 @@ const service = axios.create({
   //baseURL: 'http://172.24.249.135:9900',
   //baseURL: 'http://172.26.6.154:9900', //余小娟
   //baseURL: 'http://172.26.7.103:9900', //王旭
-  baseURL: "https://cfms-web-test.evergrande.com/cfms",
+  // baseURL: "http://10.100.173.86:8080/",
+  baseURL: "https://shgg-test.evergrande.com/", //测试环境
   //  baseURL: env.apiHost,
-  timeout: 30000 // 请求超时时间
+  timeout: 1000*60*3 // 请求超时时间
 });
 
 // request拦截器
@@ -33,6 +34,8 @@ service.interceptors.request.use(
     if (store.state.token !== null && store.state.token !== '') {
       config.headers['Authorization'] = store.state.token
     }
+    config.data.info = window.info;
+    console.log(config);
     return config
   },
   error => {
@@ -46,24 +49,23 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     let data = response.data;
-    if (data.code === 200) {
+    if (data.success) {
       return data
-    } else if (data instanceof Blob) {
-      exportFile(response);
-    } else if(data.code === 503014){
-      Toast.fail("失败文案")
-    }
-    else {
-      Toast.fail("失败文案")
+    } else {
+      Toast.fail({
+        message:'服务器忙，请稍后重试',
+      });
     }
     return Promise.reject(response)
   },
   error => {
     let errorInfo = {}
     if (error.response) {
-      errorInfo.errCode = error.response.status
-      errorInfo.msg = error.response.data.msg
-      errorInfo.code = error.response.data.code
+      errorInfo.errCode = error.response.data.errCode;
+      errorInfo.msg = error.response.data.message;
+      Toast.fail({
+        message:errorInfo.msg
+      });
     }
     return Promise.reject(errorInfo)
   }

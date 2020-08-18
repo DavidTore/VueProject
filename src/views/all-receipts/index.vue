@@ -2,23 +2,26 @@
     <div>
         <div class="title">
            <van-nav-bar
-               left-arrow @click-left="onClickLeft" >
-                <template #title>二次签章列表({{listNum}})</template>
-            </van-nav-bar>
-            <van-search v-model="searchInput" show-action placeholder="请输入单号">
-                <template #action> 
-                    <div @click="onSearch">搜索</div> 
+               left-arrow @click-left="onClickLeft" @click-right="onClickRight">
+                <template #title>已签核</template>
+                <template #right>
+                    <van-image width="30" height="30"  :src="require('@/assets/images/filter.png')"></van-image>
                 </template>
-            </van-search>
+            </van-nav-bar>
         </div>
         <div class="content">
-            <van-list v-model="listLoading" :finished="listFinished" 
+            <div>
+                <van-popup v-model="showPopup" position="right" :style="{width: '80%',height:'100%', position:'absolute'}">
+                    内容
+                </van-popup>
+            </div>
+            <!-- <van-list v-model="listLoading" :finished="listFinished" 
                 :error.sync="listError" finished-text="没有更多了" error-text="请求失败，点击重新加载" 
                 @load="onLoadList" >
             <div>
-                <list-detail v-for="item in recheckList" :item="item" v-bind:key="item.id"></list-detail>
+                <list-detail v-for="(item,index) in recheckList" :item="item" :index="index" v-bind:key="item.id"></list-detail>
             </div>
-            </van-list>
+            </van-list> -->
         </div>
 
     </div>
@@ -26,57 +29,33 @@
 
 <script>
 import API from '@/service/secondSign/index.js';
-import ListDetail from './detail.vue';
 export default {
-    components:{ListDetail},
+    components:{},
     data() {
         return {
-            listNum:0,
-            searchInput:'',
-            recheckList: [], //列表
-            listLoading: false,
-            listFinished: false,
-            listError: false,
-            pageNum: 1,
+            showPopup:false,
         }
     },
     methods: {
         onClickLeft(){
             this.$router.go(-1)
         },
+        onClickRight(){
+            this.showPopup = true;
+        },
         onSearch(){
-            console.log(this.searchInput)
         },
         onLoadList(){
-            // this.pageNum++;
-            API.getRechcekList({param:{pageNum:this.pageNum}}).then(
-                res=>{
-                    this.pageNum++;
-                    this.recheckList = this.recheckList.concat(res.data.rows);
-                    this.listLoading = false;
-                    console.log(this.recheckList.length);
-                    if(this.recheckList.length >= res.data.total) {
-                        this.listFinished = true;
-                    }
-                }
-            ).catch(e => {
-                this.listLoading = false;
-                this.listError = true;
-            })
+        
         }
     },
-    created(){
-        API.getRechcekList({param:{pageNum: 1}}).then(res => {
-            this.listNum = res.data.total;
-        }).catch( e => {});
-        
-    }
+    created(){}
 }
 </script>
 
 <style lang="less" scoped>
 /deep/ .title{
-    height: 120px;
+    height: 70px;
     position:fixed;
     width: 100%;
     .van-nav-bar{
@@ -91,8 +70,12 @@ export default {
     bottom:0;
     overflow-y:scroll;
     overflow-x:hidden;
-    top: 120px;
+    top: 64px;
     background: rgb(245, 245, 250);
+    .van-overlay{
+        top: 64px;
+        background-color: rgba(0,0,0,.4);
+    }
     .card {
         margin: 40pt 30pt;
         // width:210pt;

@@ -16,13 +16,13 @@ function filterNavPages(data) {
 }
 
 export const routes = [
-  {
-    path: "/",
-    name: "layout",
-    redirect: "/login",
-    children: [
-    ]
-  },
+  // {
+  //   path: "/",
+  //   name: "layout",
+  //   redirect: "/login",
+  //   children: [
+  //   ]
+  // },
   {
     path: "/login",
     name: "login",

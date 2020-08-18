@@ -2,17 +2,17 @@
     <div>
         <van-cell-group >
             <van-cell :style="{background:(compareFlag?'#7F8792':'#E1E3E9') , border:(compareFlag?'2px solid #F2584F':'none') }">
-                <span v-if="!compareFlag" style="font-size:17px;color: #666666;">{{(index+1)*10}}.物料编号：{{item.materialNumber}}</span>
-                <span v-else style="font-size:17px; color:white">{{(index+1)*10}}.物料编号：{{item.materialNumber}}</span>
+                <span v-if="!compareFlag" style="font-size:17px;color: #666666;">{{item.poRow}}.物料编号：{{item.materialCode}}</span>
+                <span v-else style="font-size:17px; color:white">{{item.poRow}}.物料编号：{{item.materialCode}}</span>
             </van-cell>
-            <div id="flex-special"><van-cell title="物料名称：" :value="item.mateiralName"/> </div>
-            <van-cell title="应收数量：" :value="item.shouldNumber">
-            <template #extra><div class="extra">个</div></template>
+            <div id="flex-special"><van-cell title="物料名称：" :value="item.materialDesc"/> </div>
+            <van-cell title="应收数量：" :value="item.deliveryQuantity">
+            <template #extra><div class="extra">{{item.quantityUnitDesc }}</div></template>
             </van-cell>
             <van-cell :rules="[{ required: true, message: '请填写实收数量' }]">
             <template #title><span style="color:red;font-size: 16px">*</span><span>实收数量：</span></template>
-            <van-field v-model="listAmount" type="digit" placeholder="填写数量" @blur="checkNum"></van-field>
-            <template #extra><div class="extra">个</div></template>
+            <van-field v-model="listAmount" placeholder="填写数量" @blur="checkNum"></van-field>
+            <template #extra><div class="extra">{{item.quantityUnitDesc }}</div></template>
             </van-cell>
 
             <van-field v-if="compareFlag" v-model="amountReason" label="少收原因：" placeholder="请选择原因" readonly right-icon="arrow" required
@@ -40,7 +40,7 @@ export default {
             listAmount: '',
             amountReason: '',
             showReason: false,
-            reasonColumns: ['杭州', '宁波', '温州', '嘉兴', '湖州'],
+            reasonColumns: ['货损', '少发', '质量问题'],
         }
     },
     props:{
@@ -49,11 +49,12 @@ export default {
             default: () => {}
         },
         index: Number,
+        deliveryOrder: String,
     },
     methods:{
         checkNum(){
-            if(this.listAmount > this.item.shouldNumber){
-                this.listAmount = this.item.shouldNumber
+            if(this.listAmount > this.item.deliveryQuantity){
+                this.listAmount = this.item.deliveryQuantity
             }
         },
         onClickReason(){
@@ -64,7 +65,7 @@ export default {
             this.showReason = false;
         },
         onChange(picker, value, index) {
-            this.$toast.success(`当前值：${value}, 当前索引：${index}`);
+            //  this.$toast.success(`当前值：${value.text},${value.id}, 当前索引：${index}`);
         },
         onCancel() {
             this.showReason = false;
@@ -79,23 +80,24 @@ export default {
         },
         //返回表单
         getCellList(){
-            if(this.compareFlag){
-                return {
-                    listAmount: this.listAmount,
-                    amountReason: this.amountReason,
-                }
-            } else return {
-                listAmount: this.listAmount
-            }
+            if(this.compareFlag){ //如果少发货
+                return Object.assign(this.item, {
+                    actualQuantity: Number(this.listAmount),
+                    lessQuantityReason : this.amountReason,
+                })
+            } else return  Object.assign(this.item,{
+                actualQuantity: Number(this.listAmount),
+            })
+            
         }
     },
     computed:{
         compareFlag(){
-            return this.listAmount < this.item.shouldNumber
+            return this.listAmount < this.item.deliveryQuantity
         }
     },
     created() {
-        this.listAmount = this.item.actualAmount;
+        this.listAmount = this.item.actualQuantity;
     },
     watch: {
         item:{

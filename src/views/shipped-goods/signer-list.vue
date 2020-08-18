@@ -9,9 +9,9 @@
             <van-search v-model="searchInputValue" show-action 
                         shape="round"  placeholder="输入姓名" @cancel="onClickCancel" 
                         @input="onSignerInput" @search="onSearchSigner" />
-             <van-cell v-for="item in searchList" :key="item.id" @click="onClickCell(item)">
+             <van-cell v-for="item in searchList" :key="item.receiverId " @click="onClickCell(item)">
                  <template #title>
-                     {{item.name}}-{{item.id}}
+                     {{item.receiverName }}-{{item.receiverMobile }}
                  </template>
              </van-cell>
             </div>
@@ -21,26 +21,37 @@
 </template>
 
 <script>
+import API from '@/service/shipped/index.js';
 export default {
     name:'signerList',
     data() {
         return {
             searchInputValue: '',
-            searchList:[]
+            searchList:[],
         }
     },
     props:{
         show: {
             type:Boolean,
             default:false,
-        }
+        },
+        signerList: {
+            type: Array,
+            default: () => [],
+        },
     },
     methods:{
         onClickCancel(){
             this.$emit('onClickCancel')
         },
         onSignerInput(val){
-            console.log(val);
+            if(val!=''){
+                console.log(val)
+                this.searchList = this.signerList.filter(f => { return f.name.search(val) != -1 })
+            } else {
+                console.log(11)
+                this.searchList = this.signerList;
+            }
         },
         onSearchSigner(val){
             console.log(val);
@@ -52,11 +63,14 @@ export default {
     computed:{
     },
     created() {
-        for (let i = 0; i < 10; i++) {
-          this.searchList.push({name: this.searchList.length + 1, id: i});
-        }
-    },
+        },
     watch: {
+        signerList:{
+            immediate: true,
+            handler(val){
+                this.searchList = val;
+            }
+        }
     }
 }
 </script>

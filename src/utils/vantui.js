@@ -20,6 +20,8 @@ import {
     Popup,
     Search,
     List,
+    Overlay,
+    Loading,
 } from 'vant';
 
 const arr = [
@@ -42,6 +44,8 @@ const arr = [
     Popup,
     Search,
     List,
+    Overlay,
+    Loading,
 ];
 
 for (let i = 0; i < arr.length; i++) {

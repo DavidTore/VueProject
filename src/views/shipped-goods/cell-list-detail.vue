@@ -2,17 +2,17 @@
     <div>
         <van-cell-group >
             <van-cell :style="{background:(compareFlag?'#7F8792':'#E1E3E9') , border:(compareFlag?'2px solid #F2584F':'none') }">
-                <span v-if="!compareFlag" style="font-size:17px;color: #666666;">{{(index+1)*10}}.物料编号：{{item.materialNumber}}</span>
-                <span v-else style="font-size:17px; color:white">{{(index+1)*10}}.物料编号：{{item.materialNumber}}</span>
+                <span v-if="!compareFlag" style="font-size:17px;color: #666666;">{{item.deliveryOrderRow}}.物料编号：{{item.materialCode}}</span>
+                <span v-else style="font-size:17px; color:white">{{item.deliveryOrderRow}}.物料编号：{{item.materialCode}}</span>
             </van-cell>
-            <div id="flex-special"><van-cell title="物料名称：" :value="item.mateiralName"/> </div>
-            <van-cell title="应收数量：" :value="item.shouldNumber">
-            <template #extra><div class="extra">个</div></template>
+            <div id="flex-special"><van-cell title="物料名称：" :value="item.materialDesc"/> </div>
+            <van-cell title="应收数量：" :value="item.deliveryQuantity">
+            <template #extra><div class="extra">{{item.quantityUnitDesc }}</div></template>
             </van-cell>
-            <van-cell title="实收数量：" :value="item.actualAmount">
-            <template #extra><div class="extra">个</div></template>
+            <van-cell title="实收数量：" :value="item.actualQuantity ">
+            <template #extra><div class="extra">{{item.quantityUnitDesc }}</div></template>
             </van-cell>
-            <div id="flex-special" v-if="compareFlag"><van-cell title="少收原因：" :value="item.reason"/> </div>
+            <div id="flex-special" v-if="compareFlag"><van-cell title="少收原因：" :value="item.lessQuantityReason "/> </div>
         </van-cell-group>
     </div>
 </template>
@@ -25,6 +25,7 @@ export default {
             listAmount: '',
             amountReason: '',
             showReason: false,
+            compareFlag: false,
         }
     },
     props:{
@@ -48,22 +49,12 @@ export default {
         onCancel() {
             this.showReason = false;
         },
-        //验证表单
-        validateCell(){
-            if(!this.listAmount){
-                return false;
-            } else if(this.compareFlag && !this.amountReason){
-                return false;
-            } else return true;
-        },
         
     },
     computed:{
-        compareFlag(){
-            return this.item.actualAmount != this.item.shouldNumber
-        }
     },
     created() {
+        this.compareFlag = this.item.actualQuantity != this.item.deliveryQuantity;
     },
     watch: {
         item:{
