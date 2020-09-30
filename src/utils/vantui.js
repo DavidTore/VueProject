@@ -22,6 +22,8 @@ import {
     List,
     Overlay,
     Loading,
+    DatetimePicker,
+    Empty,
 } from 'vant';
 
 const arr = [
@@ -46,6 +48,8 @@ const arr = [
     List,
     Overlay,
     Loading,
+    DatetimePicker,
+    Empty,
 ];
 
 for (let i = 0; i < arr.length; i++) {

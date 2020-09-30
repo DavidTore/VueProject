@@ -14,13 +14,13 @@
                 <van-cell title="施工单位：" :value="item.usingDepartment "></van-cell> 
                 <van-cell title="使用位置：" :value="item.usingPlace "></van-cell> 
                 <van-cell title="作废旧单：" >
-                    <a :href="item.oldPdf ">{{item.oldPdf}}</a>
+                    <a @click="() => pdfPreviewOld(item.oldPdf)">{{item.oldPdfName}}</a>
                     </van-cell> 
                 <van-cell title="质检结果：">
                         <a @click="getResults">点击查看</a>
                     </van-cell> 
-                <van-cell title="待签新单:" :value="item.newPdf">
-                    <a href="">{{item.newPdf }}</a>
+                <van-cell title="待签新单:" >
+                    <a @click="() => pdfPreview(item.newPdf)">{{item.newPdfName }}</a>
                     </van-cell> 
             </div>
         </van-cell-group>
@@ -46,21 +46,38 @@ export default {
         onConfirmCheck(){
             this.$dialog.confirm({title:'提示',message:'确定签章？'})
                     .then(()=>{
-                        console.log('confirm');
-                        API.submitRecheck({param:this.item.deliveryOrder}).then(res=>{ this.reload();}).catch(e=>{});
+                        let loadingDialog = this.$toast.loading({
+                                            duration: 0,
+                                            forbidClick: true,
+                                            message:'信息上传中，请勿离开...'
+                                            })
+                        API.submitRecheck({param:this.item.deliveryOrder}).then(res=>{ loadingDialog.clear(); this.$toast.success('操作成功'); this.reload(); }).catch(e=>{loadingDialog.clear();});
                         }).catch(()=>{console.log('cancel')})
         },
         onConfirmCancel(){
             this.$dialog.confirm({title:'提示',message:'确定作废？'})
                                         .then(()=>{
-                                            console.log('confirm');
-                                            API.invalidRecheck({param:this.item.deliveryOrder}).then(res=>{this.reload();}).catch(e=>{});
+                                            let loadingDialog = this.$toast.loading({
+                                                                duration: 0,
+                                                                forbidClick: true,
+                                                                message:'信息上传中，请勿离开...'
+                                                                })
+                                            API.invalidRecheck({param:this.item.deliveryOrder}).then(res=>{ loadingDialog.clear(); this.$toast.success('操作成功'); this.reload(); }).catch(e=>{loadingDialog.clear();});
                                         })
                                         .catch(()=>{console.log('cancel')})
 
         },
         getResults(){
-            this.$router.push({name:'recheck-result'})
+            this.$router.push({name:'recheck-result',params:{deliveryOrder: this.item.deliveryOrder}});
+        },
+        //预览新的单子
+        pdfPreview(val){
+            console.log(val)
+            this.$router.push({name:'pdf-preview',params:{pdfId:val, pdfUrl:'https://shgg-test.evergrande.com/h5/dfs/download?objectName='+ val }})
+        },
+        //预览旧的单子
+        pdfPreviewOld(val) {
+            this.$router.push({name:'pdf-preview',params:{pdfId:val, pdfUrl:'https://shgg-test.evergrande.com/h5/ot/download?id='+ val }})
         }
         
     },
@@ -74,6 +91,8 @@ export default {
 #flex-special{
     .van-cell__value{
         flex: 1.4;
+        color: #1577FF;
+        a{text-decoration: none;} 
     }
 }
 .van-button{

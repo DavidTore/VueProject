@@ -47,7 +47,7 @@ export default {
         onSignerInput(val){
             if(val!=''){
                 console.log(val)
-                this.searchList = this.signerList.filter(f => { return f.name.search(val) != -1 })
+                this.searchList = this.signerList.filter(f => { return f.receiverName.search(val) != -1 })
             } else {
                 console.log(11)
                 this.searchList = this.signerList;
@@ -76,5 +76,7 @@ export default {
 </script>
    
 <style lang="less" scoped>
-
+/deep/ .van-search__content--round{
+    background-color: #f0f0f0;
+}
 </style>

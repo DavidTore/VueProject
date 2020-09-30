@@ -20,5 +20,18 @@ export default {
   },
   dropCommit(params) {
     return fetch.post(`${prefix}/receiving/dropAndRecommitted`, params);
+  },
+  //upload pictures
+  uploadPic(files,params) {
+    return fetch.post(`${prefix}/picture/simple/upload?deliveryOrder=${params}`,files,{headers: {
+      'Content-Type': 'multipart/form-data' }})
+  },
+  //删除单号下所有的照片
+  deleteAllPhotos(params){
+    return fetch.post(`${prefix}/picture/picDel/prefix`, params);
+  },
+  //根据单号和地址删除某一张照片
+  deletePhoto(params){
+    return fetch.post(`${prefix}/picture/picDel/single`, params);
   }
 };

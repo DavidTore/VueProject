@@ -45,7 +45,9 @@ export default {
   methods: {
     onClickLeft(){
       console.log('onClickLeft');
-      window.webViewWindow.closeWebViewWindow();
+      if(window.iOSInfo){
+        window.webkit.messageHandlers.closeWebView.postMessage({});
+      } else  {window.webViewWindow.closeWebViewWindow();}
     },
     shippedClick(){
       this.$router.push({
@@ -66,7 +68,24 @@ export default {
       if(res.data > 99) {
         this.badgeNum = "99+"
       } else this.badgeNum = res.data
-    }).catch(e => {});
+    }).catch(e => {
+    });
+  },
+  beforeCreate(){
+    if(window.info == undefined){
+  var u = navigator.userAgent;
+  var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+  var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+  if (isAndroid) {
+    let jsonData = window.initParamInfos.getAppInfo();
+    window.info = JSON.parse(jsonData);
+  }
+  if (isiOS) {
+    let iOSInfos = JSON.parse(JSON.stringify(window.iOSInfo));
+    window.info = iOSInfos;
+    // window.webViewWindow.closeWebViewWindow = window.webkit.messageHandlers.closeWebView.postMessage;
+  }
+  }
   }
   
 }

@@ -22,6 +22,7 @@
                 v-model="receiptNumber"
                 title="输入单号"
                 close-button-text="确定"
+
                 :show="showKeyboard"
                 :maxlength="16"
                 @blur="showKeyboard = false"
@@ -52,6 +53,20 @@ export default {
     },
     onClickRight(){
         console.log('onClickRight');
+        var u = navigator.userAgent;
+  var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+  var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+  if (isAndroid) {
+    window.webViewWindow.scanQRCode();
+  }
+  if (isiOS) {
+    window.webkit.messageHandlers.scanQRCode.postMessage({});
+    
+  }
+    },
+    scanComplete(val){
+      this.receiptNumber = val.toString();
+      this.onClose();
     },
     onClose(){
         console.log("closeKeyboard")
@@ -75,11 +90,18 @@ export default {
     }
   },
   created(){
+  },
+  mounted(){
+    window.scanComplete = this.scanComplete;
   }
   
 }
 </script>
 <style lang="less"  scoped>
+/deep/ .van-number-keyboard__close{
+  color:#F35950;
+  font-size:18px;
+}
 /deep/ .content{
     width: 100%;
     position: absolute;
@@ -88,7 +110,7 @@ export default {
     left: 0px;
     background: #354255;
     .card {
-        margin: 40pt 30pt;
+        margin: 40pt 16pt;
         // width:210pt;
         height:321pt;
         background: #FFFFFF;
@@ -97,26 +119,26 @@ export default {
     }
 }
 .receipt-number{
-    top:40pt;
+    top:100pt;
     background: #F5F5FA;
-    border-radius: 10px;
-    border-radius: 10px;
-    width: 70%;
+    border-radius: 6px;
+    width: 80%;
     margin: auto;
-    height: 33.33pt;
-    border-radius: 10px;
+    height: 40pt;
 /deep/ .van-field__control {
         text-align: center;
+        font-size:19px;
+        height: 27pt;
     }
 }
 .info{
-    top: 40pt;
+    top: 100pt;
     position: relative;
     margin-top: 10px;
     text-align: center;
     span {
         font-family: PingFangSC-Regular;
-        font-size: 13px;
+        font-size: 16px;
         color: #F35950;
         letter-spacing: 0;
         text-align: center;

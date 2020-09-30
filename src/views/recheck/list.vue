@@ -12,7 +12,7 @@
             </van-search>
         </div>
         <div class="content">
-            <van-list v-model="listLoading" :finished="listFinished" 
+            <van-list v-model="listLoading" :finished="listFinished" :immediate-check=false
                 :error.sync="listError" finished-text="没有更多了" error-text="请求失败，点击重新加载" 
                 @load="onLoadList" >
             <div>
@@ -45,18 +45,23 @@ export default {
             this.$router.go(-1)
         },
         onSearch(){
-            console.log(this.searchInput)
+            this.recheckList = [];
+            this.pageNum = 1;
+             this.onLoadList();
         },
         onLoadList(){
-            // this.pageNum++;
-            API.getRechcekList({param:{pageNum:this.pageNum}}).then(
+            this.listLoading = true;
+            API.getRechcekList({param:{pageNum:this.pageNum,deliveryOrder:this.searchInput}}).then(
                 res=>{
                     this.pageNum++;
+                    this.listNum = res.data.total;
                     this.recheckList = this.recheckList.concat(res.data.rows);
                     this.listLoading = false;
                     console.log(this.recheckList.length);
                     if(this.recheckList.length >= res.data.total) {
                         this.listFinished = true;
+                    } else {
+                        this.listFinished = false;
                     }
                 }
             ).catch(e => {
@@ -66,10 +71,7 @@ export default {
         }
     },
     created(){
-        API.getRechcekList({param:{pageNum: 1}}).then(res => {
-            this.listNum = res.data.total;
-        }).catch( e => {});
-        
+        this.onLoadList();
     }
 }
 </script>

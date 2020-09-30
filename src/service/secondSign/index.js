@@ -18,4 +18,8 @@ export default {
     submitRecheck(params) {
         return fetch.post(`${prefix}/secondSign/signingNew`, params);
     },
+    //查看质检报告
+    getReport(params) {
+        return fetch.post(`${prefix}/secondSign/qualityReport`, params);
+    }
 };

@@ -8,7 +8,7 @@
       <template #title>{{deliveryOrder }}</template>
       </van-nav-bar>
   </div>
-  <div class="content">
+  <div class="content" :style="{bottom: showDiscardButton? '67px' : '0' }">
     <van-cell-group>
         <van-cell title="采购订单号：" :value='poCode' >
             <template #extra>
@@ -34,7 +34,7 @@
         <div id="flex-special">
         <van-cell title="施工签章员：" :value="jobSiteReceiver"/>
         <van-cell title="附件：">
-                        <a :href="pdfId">点击查看</a>
+                        <a @click="showPdfPreview = true" style="color:#1577FF; text-decoration: none;">{{pdfName}}</a>
                     </van-cell> 
         </div>
         
@@ -43,21 +43,25 @@
         <div v-for="(item,index) in materialList" v-bind:key="item.materialCode">
             <cell-list-detail :item="item" :index="index"></cell-list-detail>
         </div>
-        <div style="margin-top:10px;background: #FFFFFF;height:52pt;width:100%;" v-if="showDiscardButton">
-            <div style="text-align:center">
-            <van-button @click="discardReceipt" style="background: #F2584F; border-radius: 8px; color:white; width:75%; margin-top:9pt">作废并重新发起</van-button>
-            </div>
-        </div>
     </van-form>
   </div>
+    <div class="bottom" style="background: #FFFFFF;height:65px;width:100%; bottom:0;position:fixed;" v-if="showDiscardButton">
+            <div style="text-align:center">
+                <van-button @click="discardReceipt" style="background: #F2584F; border-radius: 6px; color:white; width:90%; margin-top:9pt">作废并重新发起</van-button>
+            </div>
+    </div>
+        <div v-if="showPdfPreview">
+          <pdf-preview :show="showPdfPreview" @onClickCancel="showPdfPreview = false" :pdfId="pdfId"> </pdf-preview>
+        </div>
   </div>
 </template>
 
 <script>
 import API from '@/service/shipped/index.js';
 import CellListDetail from "./cell-list-detail.vue";
+import PdfPreview from './pdf.vue';
 export default {
-  components:{CellListDetail},
+  components:{CellListDetail,PdfPreview},
   name: 'receiptsDetail',
   data() {
     return {
@@ -77,6 +81,8 @@ export default {
       projectName:'',
       usingPlace:'',
       pdfId:'',
+      pdfName:'',
+      showPdfPreview: false,
       inTime : '',  //收货到场时间
       receiveTimeFlag: false,
       photoList: [],    //收货照片
@@ -86,7 +92,6 @@ export default {
   },
   methods: {
     onClickLeft(){
-      
       this.$router.push({name:'get-receipts'});
     },
     //二次签章按钮
@@ -95,12 +100,22 @@ export default {
           title: '提示',
           message:'确定作废，并重新发起？'
       }).then(() => {
+          let loadingDialog = this.$toast.loading({
+            duration: 0,
+            forbidClick: true,
+            message:'信息上传中，请勿离开...'
+        })
       API.dropCommit({param:{deliveryOrder:this.deliveryOrder}}).then(res =>  {
+          loadingDialog.clear();
           this.$router.push({name: 'fill-in-receipts', params:{deliveryOrder:this.deliveryOrder}});
-      }).catch(e=>{})
+      }).catch(e=>{loadingDialog.clear();})
       })
         .catch((e)=>{});
-    }
+    },
+    pdfPreview(val){
+            console.log(val)
+            
+        }
     
   },
   created(){
@@ -128,7 +143,6 @@ export default {
 /deep/ .content{
     width: 100%;
     position: fixed;
-    bottom:0;
     overflow-y:scroll;
     overflow-x:hidden;
     top: 70px;

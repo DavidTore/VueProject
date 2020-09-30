@@ -14,7 +14,8 @@ const service = axios.create({
   // baseURL: "http://10.100.173.86:8080/",
   baseURL: "https://shgg-test.evergrande.com/", //测试环境
   //  baseURL: env.apiHost,
-  timeout: 1000*60*3 // 请求超时时间
+  timeout: 1000*60*3, // 请求超时时间
+  withCredentials:true, //带上cookie
 });
 
 // request拦截器
@@ -51,6 +52,10 @@ service.interceptors.response.use(
     let data = response.data;
     if (data.success) {
       return data
+    } else if( !data.errCode && typeof(data.errCode)!="undefined" && data.errCode!=0 ){
+      Toast.fail({
+        message:data.message
+      });
     } else {
       Toast.fail({
         message:'服务器忙，请稍后重试',

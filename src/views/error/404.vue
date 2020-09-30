@@ -1,5 +1,5 @@
 <template>
-  <div class="error404">
+  <!-- <div class="error404">
     <div class="error404-body-con">
       <div class="error404-body-con-title">40
         <label class="animation">4</label>
@@ -15,6 +15,12 @@
                    type="primary">返回上一页</button>
       </div>
     </div>
+  </div> -->
+  <div>
+    <van-empty image="error" description="发生未知错误" class="log">
+      <van-button  @click="goHome" round type="danger" style="margin-right:25px;">返回首页</van-button>
+      <van-button  @click="backPage" round type="warning">返回上一页</van-button>
+    </van-empty>
   </div>
 </template>
 
@@ -34,6 +40,15 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.log {
+position:absolute; /*绝对定位*/
+top:50%; /*距顶部50%*/
+left:50%;
+margin:-100px 0 0 -150px; /*设定这个div的margin-top的负值为自身的高度的一半,margin-left的值也是自身的宽度的一半的负值.(感觉在绕口令)*/
+width:300px; /*宽为400,那么margin-top为-200px*/
+height:200px; /*高为200那么margin-left为-100px;*/
+z-index:99; /*浮动在最上层 */
+}
 @keyframes error404animation {
   0% {
     transform: rotateZ(0deg);

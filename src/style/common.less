@@ -1,6 +1,9 @@
 @headerHeight: 64px;
 @headerColor: rgba(242,71,61,0.90);
 
+.van-hairline--bottom::after{
+  border-bottom-width: 0;
+}
 .van-nav-bar{
     background-color: @headerColor;
     height: @headerHeight;
@@ -53,13 +56,19 @@
   margin-bottom: 7px;
 }
 .van-cell {
+    padding-bottom: 7px;
+    padding-top:7px;
+
   .van-cell__title{
+    flex:0.8;
     span{
       color:#333333;
+      font-size:15px;
     }
   }
   .van-cell__value{
     flex: 1;
+    font-size:15px;
     span{
       color: #666666;
     }
@@ -73,17 +82,21 @@
       .van-button__text{
         font-family: PingFangSC-Medium;
         color: #FFFFFF;
-        font-size: 11px;
+        font-size: 13px;
       }
     }
     .van-uploader{
       .van-uploader__preview-image{
         width: 60px;
         height: 60px;
+        border-radius: 4px;
+        border: 1px solid #E4E6EB;
       }
       .van-uploader__upload{
         width: 60px;
         height: 60px;
+        border-radius: 6px;
+        border: 1px solid #f2f2f2;
       }
     }
   }
@@ -105,8 +118,8 @@
       min-height: 24px;/*改后新增的代码*/
       min-width:24px;/*改后新增的代码*/
       line-height: 24px;
-      right:-2px;
-      top: -12px;
+      right:10px;
+      top: -5px;
       text-align: center;
       -webkit-border-radius: 24px;
       border-radius: 24px;

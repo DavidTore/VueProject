@@ -6,17 +6,35 @@
                 <span v-else style="font-size:17px; color:white">{{item.poRow}}.物料编号：{{item.materialCode}}</span>
             </van-cell>
             <div id="flex-special"><van-cell title="物料名称：" :value="item.materialDesc"/> </div>
-            <van-cell title="应收数量：" :value="item.deliveryQuantity">
-            <template #extra><div class="extra">{{item.quantityUnitDesc }}</div></template>
+            <div>
+                <van-row>
+                    <van-col span="10">
+                        <div class="delivery" style="display:float">
+                <van-cell title="应收:" :value="item.deliveryQuantity">
+                    <!-- <template #extra><div class="extra">{{item.quantityUnitDesc }}</div></template> -->
+                </van-cell>
+            </div>
+                    </van-col>
+                    <van-col span="14">
+                        <div class="actual" style="display:float">
+            <van-cell :required="true" id="actual-quantity">
+            <template #title>
+                <span>实收：</span>
+            </template>
+            <van-field v-model="listAmount" placeholder="输入" :formatter="formatter" format-trigger="onChange" type="number" @blur="checkNum">
+            </van-field>
+            <div class="van-field__error-message" v-show="maximumFlag">最大{{maximumQuantity}}</div>
+            <template #extra><div class="extra">{{item.quantityUnitDesc }}</div>
+            </template>
             </van-cell>
-            <van-cell :rules="[{ required: true, message: '请填写实收数量' }]">
-            <template #title><span style="color:red;font-size: 16px">*</span><span>实收数量：</span></template>
-            <van-field v-model="listAmount" placeholder="填写数量" @blur="checkNum"></van-field>
-            <template #extra><div class="extra">{{item.quantityUnitDesc }}</div></template>
-            </van-cell>
-
+            </div>
+                    </van-col>
+                </van-row>
+            </div>
+            
+            
             <van-field v-if="compareFlag" v-model="amountReason" label="少收原因：" placeholder="请选择原因" readonly right-icon="arrow" required
-                            @click="onClickReason">
+                            @click="onClickReason" class="reason">
             </van-field>
             <van-popup v-model="showReason" position="bottom" :style="{ height: '50%' }" round>
                 <van-picker
@@ -40,7 +58,9 @@ export default {
             listAmount: '',
             amountReason: '',
             showReason: false,
+            maximumQuantity:0,
             reasonColumns: ['货损', '少发', '质量问题'],
+            maximumFlag: false,
         }
     },
     props:{
@@ -53,8 +73,10 @@ export default {
     },
     methods:{
         checkNum(){
-            if(this.listAmount > this.item.deliveryQuantity){
-                this.listAmount = this.item.deliveryQuantity
+            if(Number(this.listAmount) > this.maximumQuantity){
+                this.maximumFlag = true;
+            } else {
+                this.maximumFlag = false;
             }
         },
         onClickReason(){
@@ -89,6 +111,20 @@ export default {
                 actualQuantity: Number(this.listAmount),
             })
             
+        },
+        //格式化输入
+        formatter(val) {
+            if(val != ''){
+                // 选择只有小数点或者正整数的正则，且不能出现以多个0开头的情况
+                // /^([1-9]\d*\.\d+|0\.\d+|[1-9]\d*|0)$/g
+                let reg = /^([1-9]\d*\.\d*|0\.\d*|[1-9]\d*|0)$/g;
+                let res = reg.test(val);
+                if(res) { 
+                    return val;
+                } else {
+                    return val.substring(0, val.length - 1);
+                }
+            } else return val;
         }
     },
     computed:{
@@ -97,7 +133,14 @@ export default {
         }
     },
     created() {
-        this.listAmount = this.item.actualQuantity;
+        this.listAmount = this.item.actualQuantity || '';
+        let maxQuant = (this.item.toleranceRatio + 1) * this.item.deliveryQuantity;
+        if(parseInt(maxQuant) == maxQuant)
+        {
+            this.maximumQuantity = maxQuant;
+        } else {
+            this.maximumQuantity = maxQuant.toFixed(3);
+        }
     },
     watch: {
         item:{
@@ -111,9 +154,54 @@ export default {
 </script>
 
 <style lang="less" scoped>
+    .delivery { 
+        span{
+            color:rgb(131,131,131);
+        }
+        .van-cell{
+            padding-right:0;
+        }
+    }
+    .actual {
+        span{
+            color:rgb(131,131,131);
+        }
+        .van-cell{
+            padding-right:0;
+        }
+        .van-cell__title { 
+            flex: 0.5;
+        }
+        .van-cell__value{
+            flex: 0.8;
+        }
+     /deep/   .van-field__control{
+           color: #9b9b9b;
+            text-decoration: underline;
+        }
+        .extra{
+           text-align: left;
+           flex:0.6;
+           color: #9b9b9b;
+        }
+    }
+/deep/ #actual-quantity{
+    &::before{
+        position: absolute;
+        left: 8px;
+        color: #ee0a24;
+        font-size: 14px;
+        content: '*';
+    }
+}
 /deep/ .van-cell__title{
     &.van-field__label{
         flex: 0.65;
+    }
+}
+/deep/ .reason{
+    .van-cell__title{
+        flex: 0.5;
     }
 }
 #flex-special{
