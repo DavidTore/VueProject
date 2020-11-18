@@ -1,6 +1,6 @@
 
 <template>
-  <div class="hd-left-menu">
+  <div class=" -left-menu">
     <el-menu
       :default-active="crumbData.title.path"
       :collapse="isCollapse"
@@ -15,7 +15,7 @@
     >
       <el-submenu v-for="item in navData" v-permission="item.permission" :index="item.name">
         <template slot="title">
-          <i :class="item.icon + ' hd-icon-size'"></i>
+          <i :class="item.icon + '  -icon-size'"></i>
           <span>{{ item.label }}</span>
         </template>
         <template v-for="item2 in item.children">
@@ -88,7 +88,7 @@ export default {
 </script>
 
 <style lang="less">
-.hd-left-menu {
+. -left-menu {
   position: relative;
   height: 100%;
   box-shadow: 4px 7px 10px #ccc;
@@ -102,27 +102,27 @@ export default {
         font-weight: bold;
         background-color: rgba(4, 24, 44, 1) !important;
         padding-left: 18px !important;
-        .hd-icon-size {
+        . -icon-size {
           padding: 15px;
           background-size: 18px;
         }
-        .hd-icon-people-n {
+        . -icon-people-n {
           background: url("~@/assets/icons/icon_people_n.svg") no-repeat center
             left;
         }
-        .hd-icon-system-n {
+        . -icon-system-n {
           background: url("~@/assets/icons/icon_system_n.svg") no-repeat center
             left;
         }
-        .hd-icon-camera-n {
+        . -icon-camera-n {
           background: url("~@/assets/icons/icon_carmera_n.svg") no-repeat center
             left;
         }
-        .hd-icon-area-n {
+        . -icon-area-n {
           background: url("~@/assets/icons/icon_area_n.svg") no-repeat center
             left;
         }
-        .hd_icon_home_n_copy_2 {
+        . _icon_home_n_copy_2 {
           background: url("~@/assets/icons/icon_home_n.svg") no-repeat center
             left;
         }
@@ -131,23 +131,23 @@ export default {
         .el-submenu__title {
           //color: #D6000F !important;
         }
-        .hd-icon-people-n {
+        . -icon-people-n {
           background: url("~@/assets/icons/icon_people_s.svg") no-repeat center
             left;
         }
-        .hd-icon-camera-n {
+        . -icon-camera-n {
           background: url("~@/assets/icons/icon_carmera_s.svg") no-repeat center
             left;
         }
-        .hd_icon_home_n_copy_2 {
+        . _icon_home_n_copy_2 {
           background: url("~@/assets/icons/icon_home_s.svg") no-repeat center
             left;
         }
-        .hd-icon-area-n {
+        . -icon-area-n {
           background: url("~@/assets/icons/icon_area_s.svg") no-repeat center
             left;
         }
-        .hd-icon-system-n {
+        . -icon-system-n {
           background: url("~@/assets/icons/icon_system_s.svg") no-repeat center
             left;
         }
@@ -160,7 +160,7 @@ export default {
         min-width: initial !important;
         padding-left: 48px !important;
 
-        .hd-icon-project {
+        . -icon-project {
           background: url("~@/assets/icons/icon_project_n.svg") no-repeat center;
           padding: 15px;
           background-size: 18px;
@@ -168,7 +168,7 @@ export default {
 
         &.is-active {
           background: #d6000f !important;
-          .hd-icon-project {
+          . -icon-project {
             background: url("~@/assets/icons/icon_project_s.svg") no-repeat
               center;
             background-size: 18px;

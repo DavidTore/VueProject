@@ -24,6 +24,7 @@ import {
     Loading,
     DatetimePicker,
     Empty,
+    ActionSheet, 
 } from 'vant';
 
 const arr = [
@@ -50,6 +51,7 @@ const arr = [
     Loading,
     DatetimePicker,
     Empty,
+    ActionSheet, 
 ];
 
 for (let i = 0; i < arr.length; i++) {

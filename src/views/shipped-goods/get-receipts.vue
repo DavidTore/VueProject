@@ -14,13 +14,13 @@
       <div class="card"> 
           <div>
           <van-field class="receipt-number" readonly :value="receiptNumber" type="digit" 
-            placeholder="请输入正确的单号" @touchstart.native.stop="showKeyboard = true" 
+            placeholder=" " @touchstart.native.stop="showKeyboard = true" 
             :style="{border:(errorFlag?'1px solid red':'1px solid #E4E6EB')}"/>
             </div>
-            <div class="info" v-show="errorFlag"> <span>您所输入的单号不正确</span> </div>
+            <div class="info" v-show="errorFlag"> <span> </span> </div>
           <van-number-keyboard
                 v-model="receiptNumber"
-                title="输入单号"
+                title=" "
                 close-button-text="确定"
 
                 :show="showKeyboard"
@@ -30,6 +30,7 @@
                 @input="errorFlag = false"
                 @delete="errorFlag = false"
                 />   
+            <van-loading style="position: relative;margin-top: 50%;" v-if="loadingFlag" type="spinner" size="34px" vertical color="#F2584F" >加载中...</van-loading>
       </div>
   </div>
   </div>
@@ -44,6 +45,7 @@ export default {
       showKeyboard: true,
       receiptNumber: '',
       errorFlag: false,
+      loadingFlag: false,
     }
   },
   methods: {
@@ -74,16 +76,18 @@ export default {
             this.errorFlag = true;
             console.log('请传值')
         } else {
+          this.loadingFlag = true;
           API.submitReceipt({param:{
             deliveryOrder: this.receiptNumber
           }}).then(res => {
+            this.loadingFlag = false;
             if(res.data.status == 0) {
             this.$router.push({name: 'fill-in-receipts', params:{deliveryOrder:this.receiptNumber}});
-            }
-             else if(res.data.status == 1) {
+            } else {
             this.$router.push({name: 'receipts-detail', params:{deliveryOrder:this.receiptNumber}});
             }
           }).catch(err => {
+            this.loadingFlag = false;
             this.errorFlag = true;
           });
         }

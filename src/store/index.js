@@ -6,8 +6,8 @@ import navData from '@/router/navPage';
 Vue.use(Vuex);
 
 const state = {
-  token: localStorageGet('hdht_token') || '',
-  user: localStorageGet('hdht_user_info') || '' || null,
+  token: localStorageGet(' ht_token') || '',
+  user: localStorageGet(' ht_user_info') || '' || null,
   currentRoute: sessionStorageGet('current_route') || '',
   userPassword: localStorageGet('user_password') || '',
   navData: navData,
@@ -20,13 +20,13 @@ const mutations = {
   // 保存token
   saveToken(state, data) {
     state.token = data;
-    localStorageSet('hdht_token', data);
+    localStorageSet(' ht_token', data);
   },
   // 保存用户信息
   saveUser(state, data) {
     state.user = data;
     console.log('saveUser');
-    localStorageSet('hdht_user_info', data);
+    localStorageSet(' ht_user_info', data);
   },
   //记住密码
   savePassword(state, data) {
@@ -37,8 +37,8 @@ const mutations = {
   clearLogin(state) {
     state.token = '';
     state.user = null;
-    localStorageSet('hdht_token', '');
-    localStorageSet('hdht_user_info', null);
+    localStorageSet(' ht_token', '');
+    localStorageSet(' ht_user_info', null);
   },
   setCurrentRoute(state, data) {
     state.currentRoute = data;

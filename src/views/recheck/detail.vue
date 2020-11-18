@@ -4,16 +4,16 @@
             <van-cell :style="{background:'#E1E3E9'}">
                 <span style="font-size:17px;color: #666666;line-height:30px">{{item.deliveryOrder}}</span>
                 <template #extra>
-                    <van-button class="confirm-button" type="default" @click="onConfirmCheck" v-if="item.type == 1">确认签章</van-button>
-                    <van-button class="cancel-button" type="default" @click="onConfirmCancel" v-if="item.type == 2">确认作废</van-button>
+                    <van-button class="confirm-button" type="default" @click="onConfirmCheck" v-if="item.type == 1">确认 </van-button>
+                    <van-button class="cancel-button" type="default" @click="onConfirmCancel" v-if="item.type == 2">确认 </van-button>
                 </template>
             </van-cell>
             <div id="flex-special">
                 <van-cell title="材料类别：" :value="item.materialType"/>
                 <van-cell title="品牌商：" :value="item.brand"></van-cell> 
-                <van-cell title="施工单位：" :value="item.usingDepartment "></van-cell> 
+                <van-cell title=" 单位：" :value="item.usingDepartment "></van-cell> 
                 <van-cell title="使用位置：" :value="item.usingPlace "></van-cell> 
-                <van-cell title="作废旧单：" >
+                <van-cell title=" 旧单：" >
                     <a @click="() => pdfPreviewOld(item.oldPdf)">{{item.oldPdfName}}</a>
                     </van-cell> 
                 <van-cell title="质检结果：">
@@ -44,7 +44,7 @@ export default {
     },
     methods: {
         onConfirmCheck(){
-            this.$dialog.confirm({title:'提示',message:'确定签章？'})
+            this.$dialog.confirm({title:'提示',message:'确定 ？'})
                     .then(()=>{
                         let loadingDialog = this.$toast.loading({
                                             duration: 0,
@@ -55,7 +55,7 @@ export default {
                         }).catch(()=>{console.log('cancel')})
         },
         onConfirmCancel(){
-            this.$dialog.confirm({title:'提示',message:'确定作废？'})
+            this.$dialog.confirm({title:'提示',message:'确定 ？'})
                                         .then(()=>{
                                             let loadingDialog = this.$toast.loading({
                                                                 duration: 0,
@@ -73,11 +73,11 @@ export default {
         //预览新的单子
         pdfPreview(val){
             console.log(val)
-            this.$router.push({name:'pdf-preview',params:{pdfId:val, pdfUrl:'https://shgg-test.evergrande.com/h5/dfs/download?objectName='+ val }})
+            this.$router.push({name:'pdf-preview',params:{pdfId:val, pdfUrl:window.baseUrl+'/h5/dfs/download?objectName='+ val }})
         },
         //预览旧的单子
         pdfPreviewOld(val) {
-            this.$router.push({name:'pdf-preview',params:{pdfId:val, pdfUrl:'https://shgg-test.evergrande.com/h5/ot/download?id='+ val }})
+            this.$router.push({name:'pdf-preview',params:{pdfId:val, pdfUrl:window.baseUrl+'/h5/ot/download?id='+ val }})
         }
         
     },

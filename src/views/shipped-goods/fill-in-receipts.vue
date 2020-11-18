@@ -14,14 +14,14 @@
   <div class="content">
     <van-cell-group>
 
-        <van-cell title="采购订单号：" :value='poCode ' >
+        <van-cell title=" " :value='poCode ' >
             <template #extra>
                 <div class="extra">
                     <span style="font-family: PingFangSC-Medium;font-size:17px;color: #F2584F;">{{status}}</span>
                 </div>
             </template>
         </van-cell>
-        <van-cell title="供应商：" :value="supplierName" class="supplier">
+        <van-cell title=" " :value="supplierName" class="supplier">
             <template #extra>
                 <div class="extra" style="flex:0.3">
                     <van-icon name="arrow-down" color="#F2584F" @click="showMoreFlag = true" v-show="!showMoreFlag"/>
@@ -30,30 +30,59 @@
             </template>
         </van-cell>
         <div id="flex-special" v-show="showMoreFlag">
-            <van-cell title="供应商联系人：" :value="supplierContact" />
-            <van-cell title="使用单位：" :value="usingDepartment" />
-            <van-cell title="使用收货人：" :value="usingReceiver" />
-            <van-cell title="项目名称：" :value="projectName" />
-            <van-cell title="使用位置：" :value="usingPlace" />
+            <van-cell title=" " :value="supplierContact" />
+            <van-cell title=" " :value="usingDepartment" />
+            <van-cell title="   " :value="usingReceiver" />
+            <van-cell title=" " :value="projectName" />
+            <van-cell title=" " :value="usingPlace" />
         </div>
         <van-divider></van-divider>
         <div id="flex-special">
-        <van-cell title="到场时间：">
-            <van-button type="default" @click="onReceiveTime" v-if="!receiveTimeFlag">到货确认</van-button>
+        <van-cell title=" ">
+            <van-button type="default" @click="onReceiveTime" v-if="!receiveTimeFlag"> </van-button>
             <span v-else>{{inTime}}</span>
         </van-cell>
-        <van-cell title="实收数量：">
-            <van-button type="default" @click="onSetOriginalAmount">默认为应收数量</van-button>
+        <van-cell title=" ">
+            <van-button type="default" @click="onSetOriginalAmount"> </van-button>
         </van-cell>
         </div>
-        <van-cell title="施工签章员：" v-if="needSigner" class="signer">
-            <van-field v-model="signer.receiverName" placeholder="请选择签章员" readonly right-icon="arrow"
+        <van-cell title="   " v-if="needSigner" class="signer">
+            <van-field v-model="signer.receiverName" placeholder="  员" readonly right-icon="arrow"
                             @click="signerFlag = true">
             </van-field>
         </van-cell>
-        <div id="flex-special">
+
+
+        <div id="flex-special" v-if="isiOSFlag">
+            <van-cell id="photo">
+                <template #title><span> 照片：</span></template>
+                
+                <div class="van-uploader" v-if="uploadFlag">
+
+                    <div v-for="(img, index) in imgsArr" :key="index" 
+                                style="width:70px;display:inline-block;">
+                        <pic-view :data="img" :index="index" :picList="imgsArr" @iOSDelete="iOSDelete">
+                        </pic-view>
+                    </div>
+
+                    <div class="van-uploader__wrapper" style="margin:0px;" v-if="imgsArr.length<9">
+                        <div class="van-uploader__upload" @click="showActionSheet = true">
+                        <i class="van-icon van-icon-photograph van-uploader__upload-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-else v-for="(item,index) in photoList" :key="index" style="width:70px;display:inline-block">
+                    <img class="photo-img" :src="item" @click="sceneImg(photoList,index)" />
+                </div>
+            </van-cell>
+        </div>
+
+
+
+        <div id="flex-special" v-else>
         <van-cell id="photo">
-            <template #title><span>收货照片：</span></template>
+            <template #title><span> 照片：</span></template>
             <van-uploader v-model="photoList" :max-size="20 * 1024 * 1024"  v-if="uploadFlag"
             :before-delete="beforeDelete" :multiple=false :max-count="9"  :after-read="afterRead" :accept="'image/*'" />
             <div v-else v-for="(item,index) in photoList" :key="index" style="width:70px;display:inline-block">
@@ -70,23 +99,29 @@
         </div>
     </van-form>
   </div>
-  <div style="background: #FFFFFF;height:65px;width:100%; bottom:0;position:fixed; z-index:-10086;">
+  <div style="background: #FFFFFF;height:65px;width:100%; bottom:0;position:fixed; z-index:-1;">
         <div style="text-align:center; position:fixed; width:100%;">
-            <van-button style="background: #F2584F; position:relative; border-radius: 6px; color:white; width:90%; margin-top:9pt; font-size:15px" @click="onClickSubmit">提交及签章</van-button>
+            <van-button style="background: #F2584F; position:relative; border-radius: 6px; color:white; width:90%; margin-top:9pt; font-size:15px" @click="onClickSubmit">提交及 </van-button>
         </div>
     </div>
+
+    <van-action-sheet v-model="showActionSheet" 
+                              :actions="actionsSheet" 
+                              @select="onSelectActionSheet" 
+                              style="z-index:-30"/>
   </div>
 </template>
 
 <script>
-const baseURL = 'https://shgg-test.evergrande.com/h5';
+const baseURL = window.baseUrl + '/h5';
 import API from '@/service/shipped/index.js';
 import CellGroupList from "./cell-group-list.vue";
 import SignerList from "./signer-list.vue";
+import PicView from './image-test.vue';
 import axios from 'axios';
 import { ImagePreview } from 'vant';
 export default {
-  components:{CellGroupList,SignerList},
+  components:{CellGroupList,SignerList,PicView},
   name: 'fillInReceipts',
   data() {
     return {
@@ -94,30 +129,115 @@ export default {
       showMoreFlag: false, //展示更多信息
       deliveryOrder: '',
       errorFlag: false,
-      signerFlag:false, //选择签章员
-      poCode : '', //采购订单号
-      signer: {}, //外部收货签章员
-      signerName:'', //签章员选择
-      signerList: [], //签章员列表
-      goodsStatus: ['待收货','已收货'],
-      status: '', //收货状态
-      supplierName : '', //供应商名称
-      supplierContact :'', //供应商联系人
+      signerFlag:false, //选择 员
+      poCode : '', //   号
+      signer: {}, //   员
+      signerName:'', //  
+      signerList: [], //  
+      goodsStatus: ['待 ','已 '],
+      status: '', // 状态
+      supplierName : '', // 
+      supplierContact :'', // 
       usingDepartment:'',
       usingReceiver: '',
-      projectName:'', //项目名称
+      projectName:'', // 
       usingPlace:'',
-      inTime: '',  //收货到场时间
+      inTime: '',  //  
       receiveTimeFlag: false,
-      photoList: [],    //收货照片
+      photoList: [],    // 照片
       successPhotoList: [],
       materialList: [],
       sonRefresh: true,
       needSigner: true,
       uploadFlag: true,
+      isiOSFlag: false,
+      showActionSheet: false,
+      actionsSheet: [{ name: '拍照',index: 1 }, { name: '相册',index:2 }],
+      imgsArr:[],
     }
   },
+  mounted(){
+    window.callbackPictureResult = this.callbackPictureResult;
+  },
   methods: {
+      iOSDelete(file){
+            for(let item of this.successPhotoList){
+                if(item.timestamp == file.timestamp){
+                    API.deletePhoto({param:{deliveryOrder:this.deliveryOrder,picPath:item.picPath}}).then(r => {
+                        if(r.success){
+                            for(let arr in this.successPhotoList){
+                                if(this.successPhotoList[arr].timestamp == item.timestamp) {
+                                    this.successPhotoList.splice(arr, 1);
+                                }
+                            }
+                            for(let arr in this.imgsArr){
+                                if(this.imgsArr[arr].timestamp == item.timestamp) {
+                                    this.imgsArr.splice(arr, 1);
+                                }
+                            }
+                        } else{
+                            this.$toast.fail('删除图片失败')
+                        }
+                    }).catch(e => {this.$toast.fail('发生错误，删除失败')});
+                }
+            }
+      },
+      onSelectActionSheet(item){
+          this.showActionSheet = false;
+          if(item.index == 1){
+              this.getCamera();
+          } else this.getGallery();
+      },
+      getCamera(){
+        window.location.href="appcamera://";
+      },
+      getGallery(){
+        window.location.href="appgallery://";
+      },
+      callbackPictureResult(result) {
+      let blob = this.baseToBlob(result[0]);
+      let files = this.blobToFile(blob, new Date()+'.png');
+      let picInfo = {src:result[0]};
+      let fd = new FormData();
+      fd.append('file',files);
+      fd.append('deliveryOrder', this.deliveryOrder);
+      let url = `${baseURL}/picture/simple/upload`;
+      axios.post(url, fd, {headers: { 'Content-Type': 'multipart/form-data' }}).then(r=>{
+            console.log(r.data);
+            this.msg = "test"
+            let res = r.data;
+            if(!res.success){
+             this.$toast.fail('上传图片失败');
+            }
+            if(res.success){
+                picInfo.failMask = false;
+                picInfo.status = "done";
+                picInfo.timestamp = (new Date()).valueOf();
+                this.imgsArr.push(picInfo);
+                let obj = {};
+                obj.timestamp = picInfo.timestamp;
+                obj.picPath = res.data;
+                console.log(obj);
+                this.successPhotoList.push(obj);
+            }
+        }).catch(e=>{console.log(e);  this.$toast.fail('上传图片失败'); });
+    },
+      baseToBlob (dataurl) { 
+        let arr = dataurl.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+      },
+      blobToFile(theBlob, fileName){
+        theBlob.lastModifiedDate = new Date();
+        theBlob.name = fileName;
+        return theBlob;
+      },
     onClickLeft(){
       this.$dialog.confirm({
           title: '提示',
@@ -158,7 +278,7 @@ export default {
     },
     //
     onClickSubmit(){
-        this.$dialog.confirm({title:'提示',message:'确定签章？'}).then(()=>{this.onReceiptsSubmit()}).catch(()=>{});
+        this.$dialog.confirm({title:'提示',message:'确定 ？'}).then(()=>{this.onReceiptsSubmit()}).catch(()=>{});
     },
     //表单提交
     onReceiptsSubmit(){
@@ -178,7 +298,7 @@ export default {
         let loadingDialog = this.$toast.loading({
             duration: 0,
             forbidClick: true,
-            message:'信息上传中，请勿离开...'
+            // message:'信息上传合成 中，预计时间30秒左右...'
         })
         
            API.submitAllForm({param:{
@@ -192,7 +312,8 @@ export default {
            ...this.signer
        }}).then(res => {
            loadingDialog.clear();
-           this.$router.push({name: 'receipts-detail', params:{deliveryOrder:this.deliveryOrder}});
+           this.onSubmitConfirm();
+        //    this.$router.push({name: 'receipts-detail', params:{deliveryOrder:this.deliveryOrder}});
         
        }).catch(e=>{
            loadingDialog.clear();
@@ -205,14 +326,14 @@ export default {
         let flag = true;
         if(this.uploadFlag && this.successPhotoList.length == 0){
             console.log('photo')
-            this.$toast.fail('请上传收货照片');
+            this.$toast.fail('   ');
             flag = false;
         } else if(!this.inTime){
-            this.$toast.fail('请填写到场时间');
+            this.$toast.fail(' ');
             flag = false;
         } else if(this.needSigner){
             if(!this.signer.receiverName){
-            this.$toast.fail('请选择施工签章员')
+            this.$toast.fail('   员')
             flag = false;
           } 
         }
@@ -325,8 +446,20 @@ export default {
             startPosition: index,
         })
     },
+    //后台回显正在 中
+    onSubmitConfirm(){
+        this.$dialog.alert({
+            message:'生成 中... 预计用时30s，您可继续其他操作。',
+            confirmButtonText: '知道了'
+        }).then(r => {
+            this.$router.push({name: 'login'})
+        }).catch(e=>{});
+    }
   },
   created(){
+      var u = navigator.userAgent;
+      var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+      this.isiOSFlag = isiOS;
       this.deliveryOrder = this.$route.params.deliveryOrder;
       API.submitReceipt({param:{deliveryOrder:this.deliveryOrder}}).then( res => {
           Object.assign(this.$data, res.data);

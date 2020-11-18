@@ -1,9 +1,9 @@
 export default {
-    label: '收货单台账',
+    label: ' 单 ',
     children: [
         {
         path: '/receipts/list',
-        label: '收货单台账',
+        label: ' 单 ',
         name: 'receipts-list',
         permission: '',
         component: () => import('@/views/all-receipts/index')}

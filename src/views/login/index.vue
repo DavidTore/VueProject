@@ -2,7 +2,7 @@
   <div>
     <div>
       <van-nav-bar
-          title="统供材收货"
+          title="统供材 "
           left-arrow
           @click-left="onClickLeft"
       />
@@ -10,7 +10,7 @@
       <van-row style="text-align: center">
   <van-col span="8" @click="shippedClick">
     <van-image width="100" height="100"  :src="require('@/assets/images/shipped.png')"/> <br/>
-    <span>收货</span>
+    <span> </span>
   </van-col>
   <van-col span="8" @click="reCheckClick">
     <div class="alarm">
@@ -18,11 +18,11 @@
           <div class="badge" v-if="badgeNum != 0">{{badgeNum}}</div>
     </van-image>
     </div>
-    <span>二次签章</span>
+    <span>  </span>
   </van-col>
   <van-col span="8"> 
     <van-image width="100" height="100"  :src="require('@/assets/images/standing.png')" @click="receiptsListClick"/> <br/>
-    <span>收货单台账</span>
+    <span> 单 </span>
   </van-col>
 </van-row>
 </div>

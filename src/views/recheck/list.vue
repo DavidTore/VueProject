@@ -3,7 +3,7 @@
         <div class="title">
            <van-nav-bar
                left-arrow @click-left="onClickLeft" >
-                <template #title>二次签章列表({{listNum}})</template>
+                <template #title>  列表({{listNum}})</template>
             </van-nav-bar>
             <van-search v-model="searchInput" show-action placeholder="请输入单号">
                 <template #action> 
@@ -53,12 +53,15 @@ export default {
             this.listLoading = true;
             API.getRechcekList({param:{pageNum:this.pageNum,deliveryOrder:this.searchInput}}).then(
                 res=>{
+                    let pageFlag = false;
+                    if(res.data.rows.length == 0){
+                        pageFlag = true;
+                    }
                     this.pageNum++;
-                    this.listNum = res.data.total;
                     this.recheckList = this.recheckList.concat(res.data.rows);
                     this.listLoading = false;
                     console.log(this.recheckList.length);
-                    if(this.recheckList.length >= res.data.total) {
+                    if(pageFlag) {
                         this.listFinished = true;
                     } else {
                         this.listFinished = false;
@@ -71,6 +74,10 @@ export default {
         }
     },
     created(){
+        API.recheckCount({}).then(res => {
+            this.listNum = res.data;
+    }).catch(e => {
+    });
         this.onLoadList();
     }
 }

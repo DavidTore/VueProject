@@ -2,9 +2,9 @@
  * 验证工具类
  */
 let validateUtil = {
-  // 是否是恒大邮箱
+  // 
   isWscnEmail: str => {
-    let reg = /^[a-z0-9](?:[-_.+]?[a-z0-9]+)*@evergrande\.com$/i;
+    let reg = /^[a-z0-9](?:[-_.+]?[a-z0-9]+)*@companyname\.com$/i;
     return reg.test(str.trim());
   },
   // 合法uri

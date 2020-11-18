@@ -3,7 +3,7 @@
         <div class="title">
            <van-nav-bar
                left-arrow @click-left="onClickLeft" @click-right="onClickRight">
-                <template #title>已签核</template>
+                <template #title> </template>
                 <template #right>
                     <van-image width="30" height="30"  :src="require('@/assets/images/filter.png')"></van-image>
                 </template>
@@ -12,7 +12,7 @@
         <div class="content">
             <div>
                 <van-popup v-model="showPopup" position="right" :style="{width: '80%',height:'calc(100% - 65px)', position:'fixed', transform:'none',top:'auto', bottom:0, transition:'transform .00001s,-webkit-transform .00001s'}">
-                   <div style="margin-top:15px;"> <span style="margin-left: 5px;">工地收货单</span> <br>
+                   <div style="margin-top:15px;"> <span style="margin-left: 5px;"> </span> <br>
                     <input type="number" style="margin-top: 20px; margin-left: 5px; height: 50px; width: 90%; border: solid;" v-model="deliveryOrder" placeholder="请输入单号">
                    </div>
                    <div style="margin-top:25px; margin-left:5px;">
@@ -68,7 +68,6 @@ export default {
             showStartPopup: false,
             showEndPopup: false,
             pageNum:1,
-            listNum:0,
         }
     },
     methods: {
@@ -85,12 +84,15 @@ export default {
             let {deliveryOrder,pageNum,signBeginDate,signEndDate} = {...this.$data};
             API.getList({param:{deliveryOrder,pageNum,signBeginDate,signEndDate}}).then(
                 res=>{
-                    this.listNum = res.data.total;
+                    let pageFlag = false;
+                    if(res.data.rows.length == 0){
+                        pageFlag = true;
+                    }
                     this.pageNum++;
                     this.recheckList = this.recheckList.concat(res.data.rows);
                     this.listLoading = false;
                     console.log(this.recheckList.length);
-                    if(this.recheckList.length >= res.data.total) {
+                    if(pageFlag) {
                         this.listFinished = true;
                     } else {
                         this.listFinished = false;

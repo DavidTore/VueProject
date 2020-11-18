@@ -10,7 +10,7 @@ export default {
   getReceiptTime(params) {
     return fetch.post(`${prefix}/receiving/receivingTime`, params);
   },
-  //获取签章员名字等信息
+  //获取 员名字等信息
   getSigners(params) {
     return fetch.post(`${prefix}/receiving/getSigners`, params);
   },
@@ -33,5 +33,9 @@ export default {
   //根据单号和地址删除某一张照片
   deletePhoto(params){
     return fetch.post(`${prefix}/picture/picDel/single`, params);
-  }
+  },
+  //重新提交单号
+  reSign(params) {
+    return fetch.post(`${prefix}/receiving/deliveryOrder/reSigning`,params);
+  },
 };

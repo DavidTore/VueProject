@@ -1,9 +1,9 @@
 export default {
-    label: '二次签章',
+    label: '  ',
     children: [
         {
         path: '/recheck/list',
-        label: '二次签章列表',
+        label: '  列表',
         name: 'recheck-list',
         permission: '',
         component: () => import('@/views/recheck/list.vue')

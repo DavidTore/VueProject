@@ -38,7 +38,7 @@
     },
   mounted() {},
   created() {
-    this.pdfUrl = `web/viewer.html?file=` + encodeURIComponent('https://shgg-test.evergrande.com/h5/dfs/download?objectName='+ this.pdfId + '&token=' + encodeURIComponent(window.info.token) + '&uid=' + window.info.uid )
+    this.pdfUrl = `web/viewer.html?file=` + encodeURIComponent(window.baseUrl+'/h5/dfs/download?objectName='+ this.pdfId + '&token=' + encodeURIComponent(window.info.token) + '&uid=' + window.info.uid )
   },
     methods:{
         onClickLeft(){

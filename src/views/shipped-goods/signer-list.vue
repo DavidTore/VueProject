@@ -2,12 +2,12 @@
     <div>
         <div>
         <van-popup v-model="show" position="bottom" :style="{ height: '100%',background:'rgb(245,245,250)' }" >
-            <van-nav-bar title="选择签章员" left-arrow
+            <van-nav-bar title="选择 " left-arrow
                     @click-left="onClickCancel">
             </van-nav-bar>
             <div>
             <van-search v-model="searchInputValue" show-action 
-                        shape="round"  placeholder="输入姓名" @cancel="onClickCancel" 
+                        shape="round"  placeholder="" @cancel="onClickCancel" 
                         @input="onSignerInput" @search="onSearchSigner" />
              <van-cell v-for="item in searchList" :key="item.receiverId " @click="onClickCell(item)">
                  <template #title>

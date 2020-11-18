@@ -1,5 +1,5 @@
 <template>
-  <div class="hd-crumbs clearfix">
+  <div class=" -crumbs clearfix">
     <div class="left">
       <!--<div class="til">{{crumbData.title.label}}</div>-->
       <div class="crumbs" v-if="crumbData.list && crumbData.list.length">
@@ -22,7 +22,7 @@
 <script>
   import { mapState } from 'vuex';
   export default {
-    name: 'hd-crumbs',
+    name: ' -crumbs',
     data() {
       return {
 
@@ -42,7 +42,7 @@
 </script>
 
 <style lang="less">
-  .hd-crumbs {
+  . -crumbs {
     .left {
       float:left;
       .til {

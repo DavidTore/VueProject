@@ -66,7 +66,7 @@
       </div>
       <div :class=" isCollapse ? 'body-right is-collapse' : 'body-right' ">
         <div class="content relative" :style="{height: `${heiCon}px`}">
-          <hd-crumbs></hd-crumbs>
+          < -crumbs></ -crumbs>
           <router-view></router-view>
         </div>
       </div>
@@ -79,7 +79,7 @@ import { fullScreen, bindScreenChange, localStorageSet } from "@/utils";
 import leftMenu from "./left-menu";
 import { mapState } from "vuex";
 import API from "@/service/login.js";
-import hdCrumbs from "./hd-crumbs.vue";
+import  Crumbs from "./ -crumbs.vue";
 
 let timer = null;
 let fullScreenFlag = true;
@@ -121,7 +121,7 @@ export default {
       interval: '' //获取消息定时任务
     };
   },
-  components: { leftMenu, hdCrumbs },
+  components: { leftMenu,  Crumbs },
   created(){
     this.interval = setInterval(this.getMessageCount, 60000);
   },

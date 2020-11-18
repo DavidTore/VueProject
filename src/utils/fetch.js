@@ -4,15 +4,12 @@ import store from '../store'
 // let env = JSON.parse(process.env.VUE_APP_SECRET)
 import router from '@/router';
 import { exportFile } from './index';
+window.baseUrl = "";
 
 // 创建实例
 const service = axios.create({
   // baseURL: process.env.BASE_API, // 使用代理，不需要这只该项
-  //baseURL: 'http://172.24.249.135:9900',
-  //baseURL: 'http://172.26.6.154:9900', //余小娟
-  //baseURL: 'http://172.26.7.103:9900', //王旭
-  // baseURL: "http://10.100.173.86:8080/",
-  baseURL: "https://shgg-test.evergrande.com/", //测试环境
+  baseURL: window.baseUrl, //测试环境
   //  baseURL: env.apiHost,
   timeout: 1000*60*3, // 请求超时时间
   withCredentials:true, //带上cookie

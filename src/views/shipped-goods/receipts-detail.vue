@@ -8,9 +8,9 @@
       <template #title>{{deliveryOrder }}</template>
       </van-nav-bar>
   </div>
-  <div class="content" :style="{bottom: showDiscardButton? '67px' : '0' }">
+  <div class="content" :style="{bottom: showButton? '67px' : '0' }">
     <van-cell-group>
-        <van-cell title="采购订单号：" :value='poCode' >
+        <van-cell title="" :value='poCode' >
             <template #extra>
                 <div class="extra">
                     <span style="font-family: PingFangSC-Medium;font-size:17px;color: #F2584F;">{{status}}</span>
@@ -18,24 +18,33 @@
             </template>
         </van-cell>
         <div id="flex-special">
-            <van-cell title="供应商：" :value="supplierName " ></van-cell>
-            <van-cell title="供应商联系人：" :value="supplierContact " />
-            <van-cell title="使用单位：" :value="usingDepartment " />
-            <van-cell title="使用收货人：" :value="usingReceiver " />
-            <van-cell title="项目名称：" :value="projectName" />
-            <van-cell title="使用位置：" :value="usingPlace" />
+            <van-cell title="" :value="supplierName " ></van-cell>
+            <van-cell title="" :value="supplierContact " />
+            <van-cell title="" :value="usingDepartment " />
+            <van-cell title=" " :value="usingReceiver " />
+            <van-cell title="" :value="projectName" />
+            <van-cell title="" :value="usingPlace" />
         </div>
         <van-divider></van-divider>
         <div id="flex-special">
-        <van-cell title="到场时间：">
+        <van-cell title="">
             <span>{{inTime}}</span>
         </van-cell>
         </div>
         <div id="flex-special">
-        <van-cell title="施工签章员：" :value="jobSiteReceiver"/>
-        <van-cell title="附件：">
+        <van-cell title=" 员：" :value="jobSiteReceiver"/>
+        <van-cell title="">
                         <a @click="showPdfPreview = true" style="color:#1577FF; text-decoration: none;">{{pdfName}}</a>
                     </van-cell> 
+        </div>
+
+        <div id="flex-special" v-if="resStatus == 1">
+        <van-cell id="photo">
+            <template #title><span> </span></template>
+            <div v-for="(item,index) in photoList" :key="index" style="width:70px;display:inline-block">
+                <img class="photo-img" :src="item" @click="sceneImg(photoList,index)" />
+            </div>
+        </van-cell>
         </div>
         
     </van-cell-group>
@@ -45,9 +54,11 @@
         </div>
     </van-form>
   </div>
-    <div class="bottom" style="background: #FFFFFF;height:65px;width:100%; bottom:0;position:fixed;" v-if="showDiscardButton">
+    <div class="bottom" style="background: #FFFFFF;height:65px;width:100%; bottom:0;position:fixed;" v-if="showButton">
             <div style="text-align:center">
-                <van-button @click="discardReceipt" style="background: #F2584F; border-radius: 6px; color:white; width:90%; margin-top:9pt">作废并重新发起</van-button>
+                <van-button v-if="resStatus == 1" @click="discardReceipt" style="background: #F2584F; border-radius: 6px; color:white; width:90%; margin-top:9pt">  </van-button>
+                <van-button v-if="resStatus == 2" @click="reloadReceipt" style="background: #F2584F; border-radius: 6px; color:white; width:90%; margin-top:9pt">刷新 结果</van-button>
+                <van-button v-if="resStatus == 3" @click="resubmitReceipt" style="background: #F2584F; border-radius: 6px; color:white; width:90%; margin-top:9pt"> </van-button>
             </div>
     </div>
         <div v-if="showPdfPreview">
@@ -57,10 +68,15 @@
 </template>
 
 <script>
+// const baseURL = '';
+const baseURL = window.baseUrl + '/h5';
 import API from '@/service/shipped/index.js';
 import CellListDetail from "./cell-list-detail.vue";
 import PdfPreview from './pdf.vue';
+import { ImagePreview } from 'vant';
+import axios from 'axios';
 export default {
+  inject:['reload'],  
   components:{CellListDetail,PdfPreview},
   name: 'receiptsDetail',
   data() {
@@ -70,10 +86,11 @@ export default {
       deliveryOrder : '',
       errorFlag: false,
       poCode: '',
-      jobSiteReceiver : '', //外部收货签章员
-      signerName:'', //签章员选择
-      goodsStatus: ['待收货','已收货'],
-      status: '', //收货状态
+      jobSiteReceiver : '', //外部  员
+      signerName:'', // 员选择
+      goodsStatus: ['待 ','已 ',' 中',' 失败'],
+      status: '', // 状态
+      resStatus: 0,
       supplierName : '',
       supplierContact :'',
       usingDepartment :'',
@@ -83,27 +100,28 @@ export default {
       pdfId:'',
       pdfName:'',
       showPdfPreview: false,
-      inTime : '',  //收货到场时间
+      inTime : '',  // 到场时间
       receiveTimeFlag: false,
-      photoList: [],    //收货照片
+      photoList: [],    // 照片
       materialList: [],
-      showDiscardButton: false, //是否显示作废按钮
+      showButton: true, //是否显示按钮
+      showDiscardButton: false, //是否显示 按钮
     }
   },
   methods: {
     onClickLeft(){
       this.$router.push({name:'get-receipts'});
     },
-    //二次签章按钮
+    //  按钮
     discardReceipt(){
     this.$dialog.confirm({
           title: '提示',
-          message:'确定作废，并重新发起？'
+          message:''
       }).then(() => {
           let loadingDialog = this.$toast.loading({
             duration: 0,
             forbidClick: true,
-            message:'信息上传中，请勿离开...'
+            message:''
         })
       API.dropCommit({param:{deliveryOrder:this.deliveryOrder}}).then(res =>  {
           loadingDialog.clear();
@@ -111,6 +129,34 @@ export default {
       }).catch(e=>{loadingDialog.clear();})
       })
         .catch((e)=>{});
+    },
+     //查看图片
+    sceneImg(images, index){
+        ImagePreview({
+            images: images,
+            showIndex: true,
+            loop: false,
+            startPosition: index,
+        })
+    },
+    //刷新
+    reloadReceipt(){
+        console.log('reload')
+        this.reload();
+            // this.$router.push({name: 'receipts-detail', params:{deliveryOrder:this.deliveryOrder}});
+    },
+    //重新提交
+    resubmitReceipt(){
+        let loadingDialog = this.$toast.loading({
+            duration: 0,
+            forbidClick: true
+        })
+        API.reSign({param:{deliveryOrder:this.deliveryOrder}}).then(r=>{
+           loadingDialog.clear();
+            this.reload();
+        }).catch(e=>{
+           loadingDialog.clear();
+        });
     },
     pdfPreview(val){
             console.log(val)
@@ -122,9 +168,40 @@ export default {
       this.deliveryOrder  = this.$route.params.deliveryOrder;
       API.submitReceipt({param:{deliveryOrder:this.deliveryOrder }}).then( res => {
           console.log(res);
-          Object.assign(this.$data,res.data)
-          this.status = this.goodsStatus[res.data.status];
+          Object.assign(this.$data,res.data);
+          let resStatus;
+          switch(res.data.status){
+            case 0:
+                resStatus = 0;  //待 
+                break;
+            case 201:
+                resStatus = 1;  //已 
+                if(!res.data.showDiscardButton){
+                    this.showButton = false;
+                }
+                break;
+            case 101:
+                resStatus = 2; // 中
+                break;
+            case 102:
+                resStatus = 3; // 失败
+                break;
+          }
+          this.resStatus = resStatus;
+          console.log(this.resStatus)
+          this.status = this.goodsStatus[resStatus];
           this.materialList = res.data.doMaterialVos;
+          if( typeof(res.data.photos) != undefined && res.data.photos.length !== 0 && this.resStatus == 1){
+              console.log('hello')
+              this.uploadFlag = false;
+              let photoAddr = [];
+              let url = `${baseURL}/picture/getResource`
+              res.data.photos.map(item => {
+                  console.log(item)
+                  axios.get(url,{params:{'path':item}}).then(r => {if(r.data.success){photoAddr.push(r.data.data)}}).catch(e=>{console.log(e)})
+              })
+              this.photoList = photoAddr;
+          }
       }).catch(e=>{});
   }
   
@@ -181,6 +258,12 @@ export default {
         text-align: center;
     }
 }
+.photo-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    border: 1px solid #E4E6EB;
+}
 .info{
     top: 40pt;
     position: relative;
@@ -195,7 +278,7 @@ export default {
     }
 }
 .extra{
-    flex: 0.4;
+    flex: 0.5;
     text-align: right;
     color:#666666;
 }
